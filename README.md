@@ -7,3 +7,5 @@ If you need some help to get certain addresses of MOTHER 3, this is the place.
 
 If you just want the build, go to:
 https://forum.starmen.net/forum/Community/PKHack/Mother-3-Randomizer-Version-0-0-1/page/1
+
+This is currently incomplete, beware!
