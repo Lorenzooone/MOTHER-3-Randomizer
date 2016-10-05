@@ -10,3 +10,5 @@ If you just want the build, go to the Release section or to:
 https://forum.starmen.net/forum/Community/PKHack/Mother-3-Randomizer-Version-0-0-1/page/1
 
 My twitter: https://twitter.com/Lorenzooone
+
+Information source for many things I randomized: http://datacrystal.romhacking.net/wiki/MOTHER_3:ROM_map
