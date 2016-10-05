@@ -17,7 +17,7 @@ int main () {
 	srand(time(NULL));
   streampos size;
    int i=0,f=0, t=0, g=0, d=0, character=0;
-   unsigned int flags[16];
+   unsigned int flags[10];
    unsigned int array1[4];
    unsigned int charrand[15];
    unsigned int enemyweakness[2][2];
@@ -43,7 +43,7 @@ int main () {
    unsigned char option;
   char *memblock;
   string input, end=".gba", neo; //ROM Name
-  for (i = 0; i <= 15; i++)
+  for (i = 0; i <= 9; i++)
 	  flags[i] = 0;
   i = 0;
   while (f == 0) {
@@ -55,21 +55,77 @@ int main () {
 		  f = 1;
 	  else if (option == '2') {
 		  while (g == 0) {
-			  cout << "\nType a number to choose one of the following options:\n\n1) Playable Character stats randomization, ";
-			  if (flags[0] == 0) {
-				  cout << "Turn OFF.\n";
-			  }
+			  cout << "\nType a number to choose one of the following options:\n\n1) -Playable Character stats randomization, ";
+			  if (flags[0] == 0)
+				  cout << "Turn OFF.";
 			  else
-				  cout << "Turn ON.\n";
-			  cout << "\n2) Enemy stats randomization, ";
-			  if (flags[1] == 0) {
-				  cout << "Turn OFF.\n";
-			  }
+				  cout << "Turn ON.";
+			  cout << "\n2) -Enemy stats randomization, ";
+			  if (flags[1] == 0)
+				  cout << "Turn OFF.";
 			  else
-				  cout << "Turn ON.\n"; //\n3) \n0) Go to the previous menu.\n";
+				  cout << "Turn ON.";
+			  cout << "\n3) --Enemy graphics randomization, ";
+			  if(flags[1]==0){
+			  if (flags[2] == 0)
+				  cout << "Turn OFF.";
+			  else
+				  cout << "Turn ON.";
+				  }
+			  else
+			  cout<<"requires Enemy stats randomization.";
+			  cout << "\n4) --Enemy seizure risky backgrounds, ";
+			  if(flags[1]==0){
+			  if (flags[3] == 0)
+				  cout << "Turn ON.";
+			  else
+				  cout << "Turn OFF.";
+				  }
+			  else
+			  cout<<"requires Enemy stats randomization.";
+			  cout << "\n5) -Enemy sprites randomization, ";
+			  if (flags[4] == 0)
+				  cout << "Turn OFF.";
+			  else
+				  cout << "Turn ON.";
+				  cout << "\n6) -Gift boxes randomization, ";
+			  if (flags[5] == 0)
+				  cout << "Turn OFF.";
+			  else
+				  cout << "Turn ON.";
+				  cout << "\n7) -Shops and item prices randomization, ";
+			  if (flags[6] == 0)
+				  cout << "Turn OFF.";
+			  else
+				  cout << "Turn ON.";
+				  cout << "\n8) -Item stats randomization, ";
+			  if (flags[7] == 0)
+				  cout << "Turn OFF.";
+			  else
+				  cout << "Turn ON.";
+				  cout << "\n9) -Item graphics randomization, ";
+			  if (flags[8] == 0)
+				  cout << "Turn OFF.";
+			  else
+				  cout << "Turn ON.";
+			  cout << "\n\n0) -Go to the previous menu.\n";
 			  cin >> option;
 			  if (option == '0')
 				  g = 1;
+			  else if ((option == '1') || (option == '2') || (option == '3') || (option == '4') || (option == '5') || (option == '6') || (option == '7') || (option == '8') || (option == '9')) {
+				  d = (unsigned char)option - 49;
+				  cout << "\n\nThanks for choosing option " << (unsigned char)option << ", here's the updated menu!\n\n\n";
+				  if (flags[d] == 0) {
+					  flags[d] = 1;
+					  if ((d == 0) || (d == 1) || (d == 4) || (d == 5) || (d == 6) || (d == 7) || (d == 8))
+						  flags[9] = flags[9] + 1;
+				  }
+				  else {
+					  flags[d] = 0;
+					  if ((d == 0) || (d == 1) || (d == 4) || (d == 5) || (d == 6) || (d == 7) || (d == 8))
+						  flags[9] = flags[9] - 1;
+				  }
+			  }
 	  else
 		  cout << "\nPlease, enter again the number.\n";
 		  }
@@ -79,8 +135,13 @@ int main () {
 	  else
 		  cout << "\nPlease, enter again the number.\n";
 	  g = 0;
+	  if(flags[9]==7){
+		  cout<<"\nNo randomization was selected, please press 2 and select something to randomize.\n";
+		  f = 0;
+		  }
   }
   f = 0;
+  d = 0;
   option = 0;
   input = "";
   getline(cin, input);
@@ -369,8 +430,10 @@ ifstream file (input, ios::in|ios::binary|ios::ate);
 				   g = 195;
 			   if ((g == 201) || (g == 202))
 				   g = 203;
+				if (flags[3]==0){
 			   if (g == 221)
 				   g = 220;
+				   }
 			   memblock[i] = g;
 			   i = i + 2;
 			   g = rand() % 2 + 148; //Encounter music
@@ -933,6 +996,7 @@ ifstream file (input, ios::in|ios::binary|ios::ate);
         //Let's randomize items price
 	   t = 0;
 	   i = 938258;
+	   if(flags[6]==0){
 	   while (t < 256) {
 			   for (f = 0; f < 2; f++)
 				   array1[f] = (unsigned char)memblock[i + f];
@@ -993,6 +1057,7 @@ ifstream file (input, ios::in|ios::binary|ios::ate);
 		   }
 		   t = t + 1;
 	   }
+	   }
 	   i = 18185449;
 	   memblock[i] = 80;
 	   memblock[i + 1] = 20;
@@ -1000,6 +1065,7 @@ ifstream file (input, ios::in|ios::binary|ios::ate);
 	   memblock[i + 9] = 27;
 	   i = 18242596; //Beginning of Gift Box Table
 	   g = 0;
+	   if(flags[5]==0){
 	   while (i <= 18253824) {
 		   g = (unsigned char)memblock[i];
 		   if ((g != 0)&&(g!=175)&&(g!=182)&&(g!=184)&&(g!=190)&&(g!=192)&&(g!=193)&&(g!=197)&&(g<200)){
@@ -1028,9 +1094,11 @@ ifstream file (input, ios::in|ios::binary|ios::ate);
 			   }
 				 i = i + 8;
 	   }
+	   }
 	   i = 21202924; //Start of enemy sprites...
 	   t = 1;
 	   g = 0;
+	   if(flags[4]==0){
 	   while (t <= 185) {
 		   if ((t != 1) && (t != 2) && (t != 3) && (t != 5) && (t != 6) && (t != 7) && (t != 8) && (t != 9) && (t != 11) && (t != 12) && (t != 13) && (t != 14) && (t != 15) && (t != 16) && (t != 17) && (t != 19) && (t != 20) && (t != 21) && (t != 22) && (t != 23) && (t != 24) && (t != 25) && (t != 26) && (t != 27) && (t != 28) && (t != 29) && (t != 30) && (t != 33) && (t != 40) && (t != 46) && (t != 56) && (t != 61) && (t != 66) && (t != 84) && (t != 91) && (t != 92) && (t != 101) && (t != 111) && (t != 133) && (t != 141) && (t != 142) && (t != 145) && (t != 160) && (t != 162) && (t != 163) && (t != 169) && (t != 180) && (t != 181)) {
 			   for (f = 0; f <= 3; f++)
@@ -1214,10 +1282,12 @@ ifstream file (input, ios::in|ios::binary|ios::ate);
 		   t = t + 1;
 		   i = i + 4;
 	   }
+	   }
 	   i = 29952424; //Start of enemy battle graphics pointers
 	   t = 0;
 	   g = 0;
 	   if (flags[1] == 0) {
+		   if(flags[2]==0) {
 		   while (t < 257) {
 			   d = 0;
 			   for (f = 0; f <= 3; f++)
@@ -1508,10 +1578,12 @@ ifstream file (input, ios::in|ios::binary|ios::ate);
 			   memblock[i] = f;
 			   t = t + 1;
 			   i = i + 2;
-		   }
+		  }
+		 }
 	   }
 	   i = 26426416; //Get items garphics
 	   t = 0;
+	   if(flags[8]==0){
 	   character = 0;
 	   while (t <= 241) {
 		   for (g = 0; g <= 287; g++)
@@ -1555,8 +1627,10 @@ ifstream file (input, ios::in|ios::binary|ios::ate);
 		   t = t + 1;
 		   i = i + 12;
 	   }
+	   }
 	   i = 938360; //Randomize item damage, attack and recovery
 	   t = 0;
+	   if(flags[7]==0){
 	   while (t < 255) {
 		   if (t != 156) {
 			   d = (unsigned char)memblock[i];
@@ -1570,25 +1644,25 @@ ifstream file (input, ios::in|ios::binary|ios::ate);
 						   if (g >= 51)
 							   g = g + 200;
 						   memblock[i + 12] = g;
-						   if (g >= 51) {
+						   if (g >= 51){
 							   memblock[i + 13] = 255;
 							   memblock[i + 14] = 255;
 							   memblock[i + 15] = 255;
 						   }
-						   else
+						   else{
 							   memblock[i + 13] =0;
 						   memblock[i + 14] = 0;
 						   memblock[i + 15] = 0;
 					   }
+				}
 					   f = rand() % 5;
 					   if (f == 4) {
 						   g = rand() % 65 + 1;
 						   if (g >= 51)
 							   g = g + 200;
 						   memblock[i + 16] = g;
-						   if (g >= 51) {
+						   if (g >= 51) 
 							   memblock[i + 17] = 255;
-						   }
 						   else
 							   memblock[i + 17] = 0;
 					   }
@@ -1691,6 +1765,16 @@ ifstream file (input, ios::in|ios::binary|ios::ate);
 						   if (g >= 31)
 							   g = g + 220;
 						   memblock[i + 12] = g;
+						   if (g >= 51){
+							   memblock[i + 13] = 255;
+							   memblock[i + 14] = 255;
+							   memblock[i + 15] = 255;
+						   }
+						   else{
+							   memblock[i + 13] =0;
+						   memblock[i + 14] = 0;
+						   memblock[i + 15] = 0;
+					   }
 					   }
 					   f = rand() % 5;
 					   if (f == 4) {
@@ -1698,6 +1782,10 @@ ifstream file (input, ios::in|ios::binary|ios::ate);
 						   if (g >= 31)
 							   g = g + 220;
 						   memblock[i + 16] = g;
+						   if (g >= 51) 
+							   memblock[i + 17] = 255;
+						   else
+							   memblock[i + 17] = 0;
 					   }
 					   f = rand() % 5;
 					   if (f == 4) {
@@ -1817,6 +1905,7 @@ ifstream file (input, ios::in|ios::binary|ios::ate);
 		   }
 		   i = i + 108;
 		   t = t + 1;
+	   }
 	   }
             file2.write (memblock, size);
         file2.close();
