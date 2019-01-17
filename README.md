@@ -12,3 +12,6 @@ https://forum.starmen.net/forum/Community/PKHack/Mother-3-Randomizer-Version-0-0
 My twitter: https://twitter.com/Lorenzooone
 
 Information source for many things I randomized: http://datacrystal.romhacking.net/wiki/MOTHER_3:ROM_map
+
+
+THIS IS REALLY OLD AND BAD CODING. IT SHOULD BE REWRITTEN FROM SCRATCH. SORRY TO WHOEVER HAS TO SEE THIS!
