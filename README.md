@@ -13,5 +13,6 @@ My twitter: https://twitter.com/Lorenzooone
 
 Information source for many things I randomized: http://datacrystal.romhacking.net/wiki/MOTHER_3:ROM_map
 
+Troubleshooting: If your character has 1 HP or 0 PP and they should have more, try checking the equipment. It may decrease the HPs/PPs to 0 or below.
 
 THIS IS REALLY OLD AND BAD CODING. IT SHOULD BE REWRITTEN FROM SCRATCH. SORRY TO WHOEVER HAS TO SEE THIS!
