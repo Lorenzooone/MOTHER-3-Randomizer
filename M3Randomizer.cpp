@@ -141,11 +141,6 @@ int main()
 		else
 			cout << "\nPlease, enter again the number.\n";
 		g = 0;
-		if (flags[9] == 7)
-		{
-			cout << "\nNo randomization was selected, please press 2 and select something to randomize.\n";
-			f = 0;
-		}
 	}
 	f = 0;
 	d = 0;
