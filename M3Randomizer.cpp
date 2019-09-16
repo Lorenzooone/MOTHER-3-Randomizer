@@ -435,9 +435,10 @@ int main() {
           if (g <= 21) {
             if (g == 1)
               memblock[i] =
-              143; // Randomize music for those who don't have it hard-coded
+              (char) (memblock[i] + 143); // Randomize music for those who don't have it hard-coded
             else if (g == 2)
-              memblock[i] = 146;
+              memblock[i] =
+              (char) (memblock[i] + 146);
             else
               memblock[i] = g + 152;
             memblock[i + 1] = 7;
@@ -445,7 +446,7 @@ int main() {
             if (g == 22)
               memblock[i] = 117;
             else if (g == 23)
-              memblock[i] = 145;
+              memblock[i] = (char) (memblock[i] + 145);
             else
               memblock[i] = g + 102;
             memblock[i + 1] = 5;
