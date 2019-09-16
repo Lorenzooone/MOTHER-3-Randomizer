@@ -1,6 +1,6 @@
 CXX=clang++
 CXXFLAGS=-g -std=c++11 -Wall -pedantic
-BIN=prog
+BIN=M3Randomizer
 
 SRC=$(wildcard *.cpp)
 OBJ=$(SRC:%.cpp=%.o)
