@@ -27,3 +27,9 @@
 *.exe
 *.out
 *.app
+
+# Trash
+*.gba
+*.ips
+*.ups
+.DS_Store
