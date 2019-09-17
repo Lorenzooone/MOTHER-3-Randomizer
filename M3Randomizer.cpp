@@ -1,4 +1,6 @@
-// reading an entire binary file
+//** Mother 3 Randomizer
+//   Randomizes various values in a Mother 3 GBA rom.
+
 
 #include <stdlib.h>
 
@@ -12,6 +14,7 @@
 
 #include <time.h>
 
+// reading an entire binary file
 bool ends_with(std::string
   const & a, std::string
   const & b);
