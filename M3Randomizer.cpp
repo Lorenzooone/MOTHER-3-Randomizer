@@ -1,6 +1,13 @@
-// reading an entire binary file
+// Mother 3 Randomizer
+// Randomizes various values in a Mother 3 GBA rom.
+// Copyright 2019 Lorenzooone
+
 
 #include <stdlib.h>
+
+#include <time.h>
+
+#include <random>
 
 #include <iostream>
 
@@ -10,16 +17,24 @@
 
 #include <sstream>
 
-#include <time.h>
 
+// reading an entire binary file
 bool ends_with(std::string
   const & a, std::string
   const & b);
 
-using namespace std;
+// stuff from std that we need, avoiding using the whole namespace (safety)
+using std::cin;
+using std::cout;
+using std::ifstream;
+using std::ios;
+using std::ofstream;
+using std::streampos;
+using std::string;
 
 int main() {
-    srand(time(NULL));
+    std:: minstd_rand simple_rand;
+    simple_rand.seed(time(NULL));
     streampos size;
     int i = 0, f = 0, t = 0, g = 0, d = 0, character = 0;
     unsigned int flags[10];
@@ -235,7 +250,7 @@ int main() {
               if (d < 2) f = 1;
               g = d - f;
               f = (f * 2) + 1;
-              d = rand() % f + g;
+              d = simple_rand() % f + g;
             }
             // Going to reconvert it back...
             while (d >= 256) {
@@ -269,7 +284,7 @@ int main() {
               if (d < 2) f = 1;
               g = d - f;
               f = (f * 2) + 1;
-              d = rand() % f + g;
+              d = simple_rand() % f + g;
             }
             // Going to reconvert it back...
             while (d >= 256) {
@@ -298,7 +313,7 @@ int main() {
               if (g < 10) d = 1;
               f = g - d;
               d = (d * 2) + 1;
-              g = rand() % d + f;
+              g = simple_rand() % d + f;
               if (g > 255) g = 255;
             }
             memblock[i] = g;
@@ -309,7 +324,7 @@ int main() {
               if (g < 10) d = 1;
               f = g - d;
               d = (d * 2) + 1;
-              g = rand() % d + f;
+              g = simple_rand() % d + f;
               if (g > 255) g = 255;
             }
             memblock[i] = g;
@@ -320,7 +335,7 @@ int main() {
               if (g < 10) d = 1;
               f = g - d;
               d = (d * 2) + 1;
-              g = rand() % d + f;
+              g = simple_rand() % d + f;
               if (g > 255) g = 255;
             }
             memblock[i] = g;
@@ -331,14 +346,14 @@ int main() {
               if (g < 10) d = 1;
               f = g - d;
               d = (d * 2) + 1;
-              g = rand() % d + f;
+              g = simple_rand() % d + f;
               if (g > 255) g = 255;
             }
             memblock[i] = g;
             i = i + 1;
             t = t + 1;
             d = 10 * t; // Randomize Kindness
-            g = rand() % d + d;
+            g = simple_rand() % d + d;
             memblock[i] = g;
             i = i + 4;
           }
@@ -351,14 +366,14 @@ int main() {
             if (i <= 837812) { // Prevent strange things where you re-learn a PSI
               if ((f != 22) && (f != 27)) {
                 if ((g >= 1) && (g < 100)) // Randomize PSI Table
-                  g = rand() % 65 + 1;
+                  g = simple_rand() % 65 + 1;
                 memblock[i] = g;
               }
             } else if ((f != 11) &&
               (f !=
                 7)) { // Prevent strange things where you re-learn a PSI
               if ((g >= 1) && (g < 100)) // Randomize PSI Table
-                g = rand() % 65 + 1;
+                g = simple_rand() % 65 + 1;
               memblock[i] = g;
             }
             i = i + 4;
@@ -385,7 +400,7 @@ int main() {
         array1[1] = 0;
         array1[2] = 0;
         while (t < 15) {
-          d = rand() % character;
+          d = simple_rand() % character;
           f = charrand[d];
           d = (unsigned char) memblock[i] + ((unsigned char) memblock[i + 1] * 256);
           if (d > 0) {
@@ -415,10 +430,10 @@ int main() {
           for (g = 0; g <= 1; g++) {
             for (f = 0; f <= 1; f++) enemyweakness[g][f] = 0;
           }
-          g = rand() % 10; // Randomize enemy typing
+          g = simple_rand() % 10; // Randomize enemy typing
           memblock[i] = g;
           i = i + 6;
-          g = rand() % 242 + 1; // Randomize Battle Backgrounds and remove
+          g = simple_rand() % 242 + 1; // Randomize Battle Backgrounds and remove
           // empty/seizure risky ones.
           if ((g == 189) || (g == 190) || (g == 191)) g = 192;
           if ((g == 193) || (g == 194)) g = 195;
@@ -428,10 +443,10 @@ int main() {
           }
           memblock[i] = g;
           i = i + 2;
-          g = rand() % 2 + 148; // Encounter music
+          g = simple_rand() % 2 + 148; // Encounter music
           memblock[i] = g;
           i = i + 2;
-          g = rand() % 56 + 1;
+          g = simple_rand() % 56 + 1;
           if (g <= 21) {
             if (g == 1)
               memblock[i] =
@@ -471,7 +486,7 @@ int main() {
             memblock[i + 1] = 0;
           }
           i = i + 2;
-          g = rand() % 2 + 1;
+          g = simple_rand() % 2 + 1;
           if (g == 1) { // Randomize victory music
             memblock[i] = 80;
             memblock[i + 1] = 4;
@@ -486,7 +501,7 @@ int main() {
             if (g < 5) d = 1;
             f = g - d;
             d = (d * 2) + 1;
-            g = rand() % d + f;
+            g = simple_rand() % d + f;
           }
           memblock[i] = g;
           i = i + 2;
@@ -499,7 +514,7 @@ int main() {
             if (d < 10) f = 1;
             g = d - f;
             f = (f * 2) + 1;
-            d = rand() % f + g;
+            d = simple_rand() % f + g;
           }
           // Going to reconvert it back...
           while (d >= 256) {
@@ -531,7 +546,7 @@ int main() {
             if (d < 10) f = 1;
             g = d - f;
             f = (f * 2) + 1;
-            d = rand() % f + g;
+            d = simple_rand() % f + g;
           }
           // Going to reconvert it back...
           while (d >= 256) {
@@ -560,7 +575,7 @@ int main() {
             if (g < 10) d = 1;
             f = g - d;
             d = (d * 2) + 1;
-            g = rand() % d + f;
+            g = simple_rand() % d + f;
             if (g > 255) g = 255;
           }
           memblock[i] = g;
@@ -571,7 +586,7 @@ int main() {
             if (g < 10) d = 1;
             f = g - d;
             d = (d * 2) + 1;
-            g = rand() % d + f;
+            g = simple_rand() % d + f;
             if (g > 255) g = 255;
           }
           memblock[i] = g;
@@ -582,7 +597,7 @@ int main() {
             if (g < 10) d = 1;
             f = g - d;
             d = (d * 2) + 1;
-            g = rand() % d + f;
+            g = simple_rand() % d + f;
             if (g > 255) g = 255;
           }
           memblock[i] = g;
@@ -593,7 +608,7 @@ int main() {
             if (g < 10) d = 1;
             f = g - d;
             d = (d * 2) + 1;
-            g = rand() % d + f;
+            g = simple_rand() % d + f;
             if (g > 255) g = 255;
           }
           memblock[i] = g;
@@ -604,7 +619,7 @@ int main() {
             if (g < 10) d = 1;
             f = g - d;
             d = (d * 2) + 1;
-            g = rand() % d + f;
+            g = simple_rand() % d + f;
             if (g > 255) g = 255;
           }
           memblock[i] = g;
@@ -615,7 +630,7 @@ int main() {
             if (g < 10) d = 1;
             f = g - d;
             d = (d * 2) + 1;
-            g = rand() % d + f;
+            g = simple_rand() % d + f;
             if (g > 255) g = 255;
           }
           memblock[i] = g;
@@ -626,7 +641,7 @@ int main() {
             if (g < 10) d = 1;
             f = g - d;
             d = (d * 2) + 1;
-            g = rand() % d + f;
+            g = simple_rand() % d + f;
             if (g > 255) g = 255;
           }
           memblock[i] = g;
@@ -637,7 +652,7 @@ int main() {
             if (g < 10) d = 1;
             f = g - d;
             d = (d * 2) + 1;
-            g = rand() % d + f;
+            g = simple_rand() % d + f;
             if (g > 255) g = 255;
           }
           memblock[i] = g;
@@ -650,13 +665,13 @@ int main() {
           array1[3] = 0;
           while (f < 20) { // Randomize Weaknesses
             if ((t != 19) && (t != 16)) {
-              g = rand() % 20;
+              g = simple_rand() % 20;
               if (g == 19)
-                g = rand() % 10001;
+                g = simple_rand() % 10001;
               else if (g <= 5)
                 g = 0;
               else
-                g = rand() % 201;
+                g = simple_rand() % 201;
               if ((g > enemyweakness[1][1]) && (g >= 100) && (f != 8) &&
                 (f != 9) && (f != 1) && (f != 13) && (f != 14) && (f != 15)) {
                 if (g > enemyweakness[1][0]) {
@@ -687,7 +702,7 @@ int main() {
           array1[1] = 0;
           f = 0;
           i = i + 16;
-          g = rand() % 59 + 1;
+          g = simple_rand() % 59 + 1;
           if (g <= 5) {
             memblock[i] = (3 * g) - 1; // Randomize Attack Sound
             memblock[i + 1] = 2;
@@ -721,12 +736,12 @@ int main() {
           // enememotur[t] = (unsigned char)memblock[i]; //Get enemy turnability
           // in Battle Memory
           i = i + 4;
-          g = rand() % 4;
+          g = simple_rand() % 4;
           if (t != 101) { // Let's have Stinky Ghosts maintain their drop
             if (g == 0) { // No drops
               for (f = 0; f < 12; f++) memblock[i + f] = 0;
             } else if (g == 1) { // One drop
-              f = rand() % 192 + 1;
+              f = simple_rand() % 192 + 1;
               if ((f > 174) && (f <= 180))
                 f = f + 1;
               else if (f == 181)
@@ -740,11 +755,11 @@ int main() {
               else
                 f = f + 7;
               memblock[i] = f;
-              f = rand() % 100 + 1;
+              f = simple_rand() % 100 + 1;
               memblock[i + 1] = f;
               for (f = 2; f < 12; f++) memblock[i + f] = 0;
             } else if (g == 2) { // Two Drops
-              f = rand() % 192 + 1;
+              f = simple_rand() % 192 + 1;
               if ((f > 174) && (f <= 180))
                 f = f + 1;
               else if (f == 181)
@@ -758,11 +773,11 @@ int main() {
               else
                 f = f + 7;
               memblock[i] = f;
-              f = rand() % 80 + 1;
+              f = simple_rand() % 80 + 1;
               memblock[i + 1] = f;
               memblock[i + 2] = 0;
               memblock[i + 3] = 0;
-              f = rand() % 192 + 1;
+              f = simple_rand() % 192 + 1;
               if ((f > 174) && (f <= 180))
                 f = f + 1;
               else if (f == 181)
@@ -776,11 +791,11 @@ int main() {
               else
                 f = f + 7;
               memblock[i + 4] = f;
-              f = rand() % 80 + 1;
+              f = simple_rand() % 80 + 1;
               memblock[i + 5] = f;
               for (f = 6; f < 12; f++) memblock[i + f] = 0;
             } else { // Three drops
-              f = rand() % 192 + 1;
+              f = simple_rand() % 192 + 1;
               if ((f > 174) && (f <= 180))
                 f = f + 1;
               else if (f == 181)
@@ -794,11 +809,11 @@ int main() {
               else
                 f = f + 7;
               memblock[i] = f;
-              f = rand() % 70 + 1;
+              f = simple_rand() % 70 + 1;
               memblock[i + 1] = f;
               memblock[i + 2] = 0;
               memblock[i + 3] = 0;
-              f = rand() % 192 + 1;
+              f = simple_rand() % 192 + 1;
               if ((f > 174) && (f <= 180))
                 f = f + 1;
               else if (f == 181)
@@ -812,11 +827,11 @@ int main() {
               else
                 f = f + 7;
               memblock[i + 4] = f;
-              f = rand() % 70 + 1;
+              f = simple_rand() % 70 + 1;
               memblock[i + 5] = f;
               memblock[i + 6] = 0;
               memblock[i + 7] = 0;
-              f = rand() % 192 + 1;
+              f = simple_rand() % 192 + 1;
               if ((f > 174) && (f <= 180))
                 f = f + 1;
               else if (f == 181)
@@ -830,7 +845,7 @@ int main() {
               else
                 f = f + 7;
               memblock[i + 8] = f;
-              f = rand() % 70 + 1;
+              f = simple_rand() % 70 + 1;
               memblock[i + 9] = f;
               for (f = 10; f < 12; f++) memblock[i + f] = 0;
             }
@@ -845,7 +860,7 @@ int main() {
             if (d < 10) f = 1;
             g = d - f;
             f = (f * 2) + 1;
-            d = rand() % f + g;
+            d = simple_rand() % f + g;
           }
           // Going to reconvert it back...
           while (d >= 256) {
@@ -876,7 +891,7 @@ int main() {
             if (d < 10) f = 1;
             g = d - f;
             f = (f * 2) + 1;
-            d = rand() % f + g;
+            d = simple_rand() % f + g;
           }
           // Going to reconvert it back...
           while (d >= 256) {
@@ -962,7 +977,7 @@ int main() {
             if (d < 5) f = 1;
             g = d - f;
             f = (f * 2) + 1;
-            d = rand() % f + g;
+            d = simple_rand() % f + g;
           }
           // Going to reconvert it back...
           while (d >= 256) {
@@ -978,10 +993,10 @@ int main() {
         t = 0;
         i = 965896;
         while (t < 36) {
-          d = rand() % 30 + 1;
+          d = simple_rand() % 30 + 1;
           g = d;
           while (d > 0) {
-            f = rand() % 192 + 1;
+            f = simple_rand() % 192 + 1;
             if ((f > 174) && (f <= 180))
               f = f + 1; // Randomize items sold in shops
             else if (f == 181)
@@ -1022,7 +1037,7 @@ int main() {
           g = (unsigned char) memblock[i];
           if ((g != 0) && (g != 175) && (g != 182) && (g != 184) && (g != 190) &&
             (g != 192) && (g != 193) && (g != 197) && (g < 200)) {
-            g = rand() % 192 + 1;
+            g = simple_rand() % 192 + 1;
             if ((g > 174) && (g <= 180))
               g = g + 1; // Randomize items in gift boxes
             else if (g == 181)
@@ -1040,7 +1055,7 @@ int main() {
           i = i + 8;
           g = (unsigned char) memblock[i];
           if ((g == 1) || (g == 33) || (g == 129)) {
-            f = rand() % 2;
+            f = simple_rand() % 2;
             if (f == 0) // Randomize colour of gift boxes
               g = g + 2;
             memblock[i] = g;
@@ -1151,7 +1166,7 @@ int main() {
             (t != 142) && (t != 145) && (t != 160) && (t != 162) &&
             (t != 163) && (t != 169) && (t != 180) && (t != 181)) {
             for (f = 0; f <= 3; f++) array1[f] = 0;
-            f = rand() % g;
+            f = simple_rand() % g;
             d = eneove[f];
             f = enespr[d];
             enearra[t] = d; // Making sure Sprites get the correct Arrangements
@@ -1375,7 +1390,7 @@ int main() {
           d = 0;
           while (t < 257) {
             for (f = 0; f <= 3; f++) array1[f] = 0;
-            f = rand() % g;
+            f = simple_rand() % g;
             d = enefine[f];
             f = enebagraph[0][d];
             enearra[t] = d; // Making sure Battle Sprites get the correct
@@ -1623,7 +1638,7 @@ int main() {
       while (t <= 255) {
         if (t != 144) {
           while (g == 0) {
-            d = rand() % 242;
+            d = simple_rand() % 242;
             if (d != 144) g = 1;
           }
           for (g = 0; g <= 287; g++) memblock[i + g] = itemgraph[d][g];
@@ -1653,11 +1668,11 @@ int main() {
           d = (unsigned char)memblock[i];
           f = (unsigned char)memblock[i + 4];
           if ((d == 0) && (f == 1)) {  // Randomize stats of Weapons
-            g = rand() % 6;
+            g = simple_rand() % 6;
             if (g == 5) {
-              f = rand() % 5;
+              f = simple_rand() % 5;
               if (f == 4) {
-                g = rand() % 65 + 1;
+                g = simple_rand() % 65 + 1;
                 if (g >= 51) g = g + 200;
                 memblock[i + 12] = g;
                 if (g >= 51) {
@@ -1670,9 +1685,9 @@ int main() {
                   memblock[i + 15] = 0;
                 }
               }
-              f = rand() % 5;
+              f = simple_rand() % 5;
               if (f == 4) {
-                g = rand() % 65 + 1;
+                g = simple_rand() % 65 + 1;
                 if (g >= 51) g = g + 200;
                 memblock[i + 16] = g;
                 if (g >= 51)
@@ -1680,21 +1695,21 @@ int main() {
                 else
                   memblock[i + 17] = 0;
               }
-              f = rand() % 5;
+              f = simple_rand() % 5;
               if (f == 4) {
-                g = rand() % 15 + 1;
+                g = simple_rand() % 15 + 1;
                 if (g >= 11) g = g + 240;
                 memblock[i + 21] = g;
               }
-              f = rand() % 5;
+              f = simple_rand() % 5;
               if (f == 4) {
-                g = rand() % 15 + 1;
+                g = simple_rand() % 15 + 1;
                 if (g >= 11) g = g + 240;
                 memblock[i + 22] = g;
               }
-              f = rand() % 5;
+              f = simple_rand() % 5;
               if (f == 4) {
-                g = rand() % 15 + 1;
+                g = simple_rand() % 15 + 1;
                 if (g >= 11) g = g + 240;
                 memblock[i + 23] = g;
               }
@@ -1705,70 +1720,70 @@ int main() {
               memblock[i + 22] = 0;
               memblock[i + 23] = 0;
             }
-            g = rand() % 6;
+            g = simple_rand() % 6;
             if (g == 5)
-              g = rand() % 50 + 51;
+              g = simple_rand() % 50 + 51;
             else if (g <= 2)
-              g = rand() % 30 + 1;
+              g = simple_rand() % 30 + 1;
             else
-              g = rand() % 30 + 26;
+              g = simple_rand() % 30 + 26;
             memblock[i + 20] = g;
-            g = rand() % 37;
+            g = simple_rand() % 37;
             if (g <= 10) {  // Randomize Ailment Resistances
-              f = rand() % 80 + 1;
+              f = simple_rand() % 80 + 1;
               f = f + 175;
               g = (g * 2) + 28;
               memblock[i + g] = f;
               memblock[i + (g + 1)] = (char) 255;
             } else if (g >= 35) {
-              f = rand() % 80 + 1;
+              f = simple_rand() % 80 + 1;
               f = f + 175;
-              g = rand() % 11;
+              g = simple_rand() % 11;
               g = (g * 2) + 28;
               memblock[i + g] = f;
               memblock[i + (g + 1)] = (char) 255;
-              f = rand() % 80 + 1;
+              f = simple_rand() % 80 + 1;
               f = f + 175;
-              g = rand() % 11;
+              g = simple_rand() % 11;
               g = (g * 2) + 28;
               memblock[i + g] = f;
               memblock[i + (g + 1)] = (char) 255;
-              f = rand() % 80 + 1;
+              f = simple_rand() % 80 + 1;
               f = f + 175;
-              g = rand() % 11;
+              g = simple_rand() % 11;
               g = (g * 2) + 28;
               memblock[i + g] = f;
               memblock[i + (g + 1)] = (char) 255;
             }
-            g = rand() % 25;  // Randomize PSI Resistances
+            g = simple_rand() % 25;  // Randomize PSI Resistances
             if (g <= 4) {
-              f = rand() % 20 + 1;
+              f = simple_rand() % 20 + 1;
               f = f + 235;
               g = g + 50;
               memblock[i + g] = f;
             } else if (g >= 23) {
-              f = rand() % 20 + 1;
+              f = simple_rand() % 20 + 1;
               f = f + 235;
-              g = rand() % 5;
+              g = simple_rand() % 5;
               g = g + 50;
               memblock[i + g] = f;
-              f = rand() % 20 + 1;
+              f = simple_rand() % 20 + 1;
               f = f + 235;
-              g = rand() % 5;
+              g = simple_rand() % 5;
               g = g + 50;
               memblock[i + g] = f;
-              f = rand() % 20 + 1;
+              f = simple_rand() % 20 + 1;
               f = f + 235;
-              g = rand() % 5;
+              g = simple_rand() % 5;
               g = g + 50;
               memblock[i + g] = f;
             }
           } else if ((d <= 3) && (f == 1)) {
-            g = rand() % 6;  // Randomize stats of Headgear & Co.
+            g = simple_rand() % 6;  // Randomize stats of Headgear & Co.
             if (g == 5) {
-              f = rand() % 5;
+              f = simple_rand() % 5;
               if (f == 4) {
-                g = rand() % 35 + 1;
+                g = simple_rand() % 35 + 1;
                 if (g >= 31) g = g + 220;
                 memblock[i + 12] = g;
                 if (g >= 51) {
@@ -1781,9 +1796,9 @@ int main() {
                   memblock[i + 15] = 0;
                 }
               }
-              f = rand() % 5;
+              f = simple_rand() % 5;
               if (f == 4) {
-                g = rand() % 35 + 1;
+                g = simple_rand() % 35 + 1;
                 if (g >= 31) g = g + 220;
                 memblock[i + 16] = g;
                 if (g >= 51)
@@ -1791,21 +1806,21 @@ int main() {
                 else
                   memblock[i + 17] = 0;
               }
-              f = rand() % 5;
+              f = simple_rand() % 5;
               if (f == 4) {
-                g = rand() % 15 + 1;
+                g = simple_rand() % 15 + 1;
                 if (g >= 11) g = g + 240;
                 memblock[i + 20] = g;
               }
-              f = rand() % 5;
+              f = simple_rand() % 5;
               if (f == 4) {
-                g = rand() % 15 + 1;
+                g = simple_rand() % 15 + 1;
                 if (g >= 11) g = g + 240;
                 memblock[i + 22] = g;
               }
-              f = rand() % 5;
+              f = simple_rand() % 5;
               if (f == 4) {
-                g = rand() % 15 + 1;
+                g = simple_rand() % 15 + 1;
                 if (g >= 11) g = g + 240;
                 memblock[i + 23] = g;
               }
@@ -1815,69 +1830,69 @@ int main() {
               memblock[i + 22] = 0;
               memblock[i + 23] = 0;
             }
-            g = rand() % 6;
+            g = simple_rand() % 6;
             if (g == 5)
-              g = rand() % 35 + 41;
+              g = simple_rand() % 35 + 41;
             else if (g <= 2)
-              g = rand() % 20 + 1;
+              g = simple_rand() % 20 + 1;
             else
-              g = rand() % 30 + 16;
+              g = simple_rand() % 30 + 16;
             memblock[i + 21] = g;
-            g = rand() % 37;
+            g = simple_rand() % 37;
             if (g <= 10) {  // Randomize Ailment Resistances
-              f = rand() % 80 + 1;
+              f = simple_rand() % 80 + 1;
               f = f + 175;
               g = (g * 2) + 28;
               memblock[i + g] = f;
             } else if (g >= 35) {
-              f = rand() % 80 + 1;
+              f = simple_rand() % 80 + 1;
               f = f + 175;
-              g = rand() % 11;
+              g = simple_rand() % 11;
               g = (g * 2) + 28;
               memblock[i + g] = f;
-              f = rand() % 80 + 1;
+              f = simple_rand() % 80 + 1;
               f = f + 175;
-              g = rand() % 11;
+              g = simple_rand() % 11;
               g = (g * 2) + 28;
               memblock[i + g] = f;
-              f = rand() % 80 + 1;
+              f = simple_rand() % 80 + 1;
               f = f + 175;
-              g = rand() % 11;
+              g = simple_rand() % 11;
               g = (g * 2) + 28;
               memblock[i + g] = f;
             }
-            g = rand() % 25;  // Randomize PSI Resistances
+            g = simple_rand() % 25;  // Randomize PSI Resistances
             if (g <= 4) {
-              f = rand() % 20 + 1;
+              f = simple_rand() % 20 + 1;
               f = f + 235;
               g = g + 50;
               memblock[i + g] = f;
             } else if (g >= 23) {
-              f = rand() % 20 + 1;
+              f = simple_rand() % 20 + 1;
               f = f + 235;
-              g = rand() % 5;
+              g = simple_rand() % 5;
               g = g + 50;
               memblock[i + g] = f;
-              f = rand() % 20 + 1;
+              f = simple_rand() % 20 + 1;
               f = f + 235;
-              g = rand() % 5;
+              g = simple_rand() % 5;
               g = g + 50;
               memblock[i + g] = f;
-              f = rand() % 20 + 1;
+              f = simple_rand() % 20 + 1;
               f = f + 235;
-              g = rand() % 5;
+              g = simple_rand() % 5;
               g = g + 50;
               memblock[i + g] = f;
             }
           } else if (((d == 4) || (d == 6)) &&
                      (f == 1)) {  // Randomize Throwable items/Healing items
             if (d == 6) {
-              g = rand() % 5;  // Randomize Throwable items typing
+              g = simple_rand() % 5;  // Randomize Throwable items typing
               memblock[i + 64] = g;
             }
             array1[0] = 0;
             array1[1] = 0;
-            g = rand() % 300 + 1;
+            g = simple_rand() % 300 + 1;
             d = g;
             while (g >= 256) {
               array1[1] = array1[1] + 1;
@@ -1888,7 +1903,7 @@ int main() {
             for (f = 0; f <= 1; f++) memblock[g + f] = array1[f];
             array1[0] = 0;
             array1[1] = 0;
-            g = rand() % 50 + 1;
+            g = simple_rand() % 50 + 1;
             g = g + d;
             while (g >= 256) {
               array1[1] = array1[1] + 1;
