@@ -435,9 +435,10 @@ int main() {
           if (g <= 21) {
             if (g == 1)
               memblock[i] =
-              143; // Randomize music for those who don't have it hard-coded
+              (char) (memblock[i] + 143); // Randomize music for those who don't have it hard-coded
             else if (g == 2)
-              memblock[i] = 146;
+              memblock[i] =
+              (char) (memblock[i] + 146);
             else
               memblock[i] = g + 152;
             memblock[i + 1] = 7;
@@ -445,7 +446,7 @@ int main() {
             if (g == 22)
               memblock[i] = 117;
             else if (g == 23)
-              memblock[i] = 145;
+              memblock[i] = (char) (memblock[i] + 145);
             else
               memblock[i] = g + 102;
             memblock[i + 1] = 5;
@@ -453,7 +454,7 @@ int main() {
             if (g == 29)
               memblock[i] = 123;
             else if (g == 30)
-              memblock[i] = 145;
+              memblock[i] = (char) (memblock[i] + 145);
             else if (g <= 40)
               memblock[i] = g + 94;
             else
@@ -461,12 +462,12 @@ int main() {
             memblock[i + 1] = 4;
           } else if (g <= 55) {
             if (g == 47)
-              memblock[i] = 169;
+              memblock[i] = (char) (memblock[i] + 169);
             else
               memblock[i] = g + 99;
             memblock[i + 1] = 1;
           } else {
-            memblock[i] = 169;
+            memblock[i] = (char) (memblock[i] + 169);
             memblock[i + 1] = 0;
           }
           i = i + 2;
@@ -475,8 +476,8 @@ int main() {
             memblock[i] = 80;
             memblock[i + 1] = 4;
           } else {
-            memblock[i] = 151;
-            memblock[i + 1] = 7;
+            memblock[i] = (char) (memblock[i] + 151);
+            memblock[i + 1] = (char) (memblock[i] + 7);
           }
           i = i + 2;
           g = (unsigned char) memblock[i];
@@ -1010,10 +1011,10 @@ int main() {
         }
       }
       i = 18185449;
-      memblock[i] = 80;
-      memblock[i + 1] = 20;
-      memblock[i + 3] = 224; // Lets prevent something...
-      memblock[i + 9] = 27;
+      memblock[i] = (char) 80;
+      memblock[i + 1] = (char) 20;
+      memblock[i + 3] = (char) 224; // Lets prevent something...
+      memblock[i + 9] = (char) 27;
       i = 18242596; // Beginning of Gift Box Table
       g = 0;
       if (flags[5] == 0) {
@@ -1660,9 +1661,9 @@ int main() {
                 if (g >= 51) g = g + 200;
                 memblock[i + 12] = g;
                 if (g >= 51) {
-                  memblock[i + 13] = 255;
-                  memblock[i + 14] = 255;
-                  memblock[i + 15] = 255;
+                  memblock[i + 13] = (char) 255;
+                  memblock[i + 14] = (char) 255;
+                  memblock[i + 15] = (char) 255;
                 } else {
                   memblock[i + 13] = 0;
                   memblock[i + 14] = 0;
@@ -1675,7 +1676,7 @@ int main() {
                 if (g >= 51) g = g + 200;
                 memblock[i + 16] = g;
                 if (g >= 51)
-                  memblock[i + 17] = 255;
+                  memblock[i + 17] = (char) 255;
                 else
                   memblock[i + 17] = 0;
               }
@@ -1718,26 +1719,26 @@ int main() {
               f = f + 175;
               g = (g * 2) + 28;
               memblock[i + g] = f;
-              memblock[i + (g + 1)] = 255;
+              memblock[i + (g + 1)] = (char) 255;
             } else if (g >= 35) {
               f = rand() % 80 + 1;
               f = f + 175;
               g = rand() % 11;
               g = (g * 2) + 28;
               memblock[i + g] = f;
-              memblock[i + (g + 1)] = 255;
+              memblock[i + (g + 1)] = (char) 255;
               f = rand() % 80 + 1;
               f = f + 175;
               g = rand() % 11;
               g = (g * 2) + 28;
               memblock[i + g] = f;
-              memblock[i + (g + 1)] = 255;
+              memblock[i + (g + 1)] = (char) 255;
               f = rand() % 80 + 1;
               f = f + 175;
               g = rand() % 11;
               g = (g * 2) + 28;
               memblock[i + g] = f;
-              memblock[i + (g + 1)] = 255;
+              memblock[i + (g + 1)] = (char) 255;
             }
             g = rand() % 25;  // Randomize PSI Resistances
             if (g <= 4) {
@@ -1771,9 +1772,9 @@ int main() {
                 if (g >= 31) g = g + 220;
                 memblock[i + 12] = g;
                 if (g >= 51) {
-                  memblock[i + 13] = 255;
-                  memblock[i + 14] = 255;
-                  memblock[i + 15] = 255;
+                  memblock[i + 13] = (char) 255;
+                  memblock[i + 14] = (char) 255;
+                  memblock[i + 15] = (char) 255;
                 } else {
                   memblock[i + 13] = 0;
                   memblock[i + 14] = 0;
@@ -1786,7 +1787,7 @@ int main() {
                 if (g >= 31) g = g + 220;
                 memblock[i + 16] = g;
                 if (g >= 51)
-                  memblock[i + 17] = 255;
+                  memblock[i + 17] = (char) 255;
                 else
                   memblock[i + 17] = 0;
               }

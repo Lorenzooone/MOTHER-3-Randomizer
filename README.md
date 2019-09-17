@@ -21,3 +21,4 @@ CLEANUP IN PROGRESS. Also I don't really know C++ at all. Let's see how this goe
     git clone https://github.com/kashaiahyah85/MOTHER-3-Randomizer.git
     cd MOTHER-3-Randomizer
     make
+    ./M3Randomizer
