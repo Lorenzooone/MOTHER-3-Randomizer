@@ -1,7 +1,7 @@
 // Mother 3 Randomizer
 // Randomizes various values in a Mother 3 GBA rom.
-// Copyright 2019 Lorenzooone
 
+// Copyright 2019 Lorenzooone
 
 #include <stdlib.h>
 
@@ -24,14 +24,10 @@ bool ends_with(std::string
   const & b);
 
 // stuff from std that we need, avoiding using the whole namespace (safety)
-using std::cin;
-using std::cout;
-using std::ifstream;
-using std::ios;
-using std::ofstream;
-using std::streampos;
-using std::string;
+using std::cin;using std::cout;using std::ifstream;using std::ios;
+using std::ofstream;using std::streampos;using std::string;
 
+// main program
 int main() {
     std:: minstd_rand simple_rand;
     simple_rand.seed(time(NULL));
