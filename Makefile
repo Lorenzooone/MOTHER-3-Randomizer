@@ -12,5 +12,5 @@ all: $(OBJ)
 	$(CXX) $@ -c $<
 
 clean:
-	rm -f *.o
-	rm $(BIN)
+	- rm -f *.o;
+	- rm -f $(BIN)
