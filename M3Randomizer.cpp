@@ -17,6 +17,29 @@
 
 #include <sstream>
 
+uint16_t read16(const char* buffer) {
+  return buffer[0] + 
+         (buffer[1] * 256);
+}
+
+void write16(char* buffer, uint16_t value) {
+  buffer[1] = (value >> 8) & 0xFF;
+  buffer[0] = (value) & 0xFF;
+}
+
+uint32_t read32(const char* buffer) {
+  return buffer[0] + 
+         (buffer[1] * 256) + 
+         (buffer[2] * 65536) + 
+         (buffer[3] * 16777216);
+}
+
+void write32(char* buffer, uint32_t value) {
+  buffer[3] = (value >> 24);
+  buffer[2] = (value >> 16) & 0xFF;
+  buffer[1] = (value >> 8) & 0xFF;
+  buffer[0] = (value) & 0xFF;
+}
 
 // reading an entire binary file
 bool ends_with(std::string
@@ -237,11 +260,8 @@ int main() {
       if (flags[0] == 0) {
         while (i < 842024) {
           while (t <= 10) {
-            for (f = 0; f <= 3; f++) array1[f] = (unsigned char) memblock[i + f];
-            d = array1[0] + (array1[1] * 256) + (array1[2] * 65536) +
-              (array1[3] *
-                16777216);  // Let's take and then randomize HP of character
-            for (f = 0; f <= 3; f++) array1[f] = 0;
+            // Let's take and then randomize HP of character
+            d = read32(memblock+i);
             if ((d > 1) && (d < 100000000)) {
               f = d / 2;
               if (d < 2) f = 1;
@@ -249,33 +269,11 @@ int main() {
               f = (f * 2) + 1;
               d = simple_rand() % f + g;
             }
-             // Going to reconvert it back...
-            while (d >= 256) {
-              while (d >= 65536) {
-                while (d >= 16777216) {
-                  array1[3] = array1[3] + 1;
-                  d = d - 16777216;
-                }
-                if (d >= 65536) {
-                  array1[2] = array1[2] + 1;
-                  d = d - 65536;
-                }
-              }
-              if (d >= 256) {
-                array1[1] = array1[1] + 1;
-                d = d - 256;
-              }
-            }
-            array1[0] = d;
-            for (f = 0; f <= 3; f++)
-              memblock[i + f] = array1[f];  // Putting back HP
+            write32(memblock+i, d);
+
+            // Let's take and then randomize PP of characters
             i = i + 4;
-            for (f = 0; f <= 3; f++)  // PP Of character
-              array1[f] = (unsigned char) memblock[i + f];
-            d = array1[0] + (array1[1] * 256) + (array1[2] * 65536) +
-              (array1[3] *
-                16777216);  // Let's take and then randomize PP of characters
-            for (f = 0; f <= 3; f++) array1[f] = 0;
+            d = read32(memblock+i);
             if ((d > 1) && (d < 100000000)) {
               f = d / 2;
               if (d < 2) f = 1;
@@ -283,26 +281,8 @@ int main() {
               f = (f * 2) + 1;
               d = simple_rand() % f + g;
             }
-             // Going to reconvert it back...
-            while (d >= 256) {
-              while (d >= 65536) {
-                while (d >= 16777216) {
-                  array1[3] = array1[3] + 1;
-                  d = d - 16777216;
-                }
-                if (d >= 65536) {
-                  array1[2] = array1[2] + 1;
-                  d = d - 65536;
-                }
-              }
-              if (d >= 256) {
-                array1[1] = array1[1] + 1;
-                d = d - 256;
-              }
-            }
-            array1[0] = d;
-            for (f = 0; f <= 3; f++)
-              memblock[i + f] = array1[f];  // Putting back PP
+            write32(memblock+i, d);
+
             i = i + 4;
             g = (unsigned char) memblock[i];
             if ((g > 1) && (g < 255)) {  // Randomize Attack
@@ -502,10 +482,8 @@ int main() {
           }
           memblock[i] = g;
           i = i + 2;
-          for (f = 0; f <= 3; f++) array1[f] = (unsigned char) memblock[i + f];
-          d = array1[0] + (array1[1] * 256) + (array1[2] * 65536) +
-            (array1[3] * 16777216);  // Let's take and then randomize HP
-          for (f = 0; f <= 3; f++) array1[f] = 0;
+          // Let's take and then randomize HP
+          d = read32(memblock+i);
           if ((d > 1) && (d < 100000000)) {
             f = d / 10;
             if (d < 10) f = 1;
@@ -513,31 +491,11 @@ int main() {
             f = (f * 2) + 1;
             d = simple_rand() % f + g;
           }
-           // Going to reconvert it back...
-          while (d >= 256) {
-            while (d >= 65536) {
-              while (d >= 16777216) {
-                array1[3] = array1[3] + 1;
-                d = d - 16777216;
-              }
-              if (d >= 65536) {
-                array1[2] = array1[2] + 1;
-                d = d - 65536;
-              }
-            }
-            if (d >= 256) {
-              array1[1] = array1[1] + 1;
-              d = d - 256;
-            }
-          }
-          array1[0] = d;
-          for (f = 0; f <= 3; f++) memblock[i + f] = array1[f];  // Putting back
-           // HP
+          write32(memblock+i, d);
           i = i + 4;
-          for (f = 0; f <= 3; f++) array1[f] = (unsigned char) memblock[i + f];
-          d = array1[0] + (array1[1] * 256) + (array1[2] * 65536) +
-            (array1[3] * 16777216);  // Let's take and then randomize PP
-          for (f = 0; f <= 3; f++) array1[f] = 0;
+
+           // Let's take and then randomize PP
+          d = read32(memblock+i);
           if ((d > 1) && (d < 100000000)) {
             f = d / 10;
             if (d < 10) f = 1;
@@ -545,27 +503,9 @@ int main() {
             f = (f * 2) + 1;
             d = simple_rand() % f + g;
           }
-           // Going to reconvert it back...
-          while (d >= 256) {
-            while (d >= 65536) {
-              while (d >= 16777216) {
-                array1[3] = array1[3] + 1;
-                d = d - 16777216;
-              }
-              if (d >= 65536) {
-                array1[2] = array1[2] + 1;
-                d = d - 65536;
-              }
-            }
-            if (d >= 256) {
-              array1[1] = array1[1] + 1;
-              d = d - 256;
-            }
-          }
-          array1[0] = d;
-          for (f = 0; f <= 3; f++) memblock[i + f] = array1[f];  // Putting back
-           // PP
+          write32(memblock+i, d);
           i = i + 4;
+
           g = (unsigned char) memblock[i];
           if ((g > 1) && (g < 255)) {  // Randomize Attack
             d = g / 10;
@@ -848,10 +788,9 @@ int main() {
             }
           }
           i = i + 12;
-          for (f = 0; f <= 3; f++) array1[f] = (unsigned char) memblock[i + f];
-          d = array1[0] + (array1[1] * 256) + (array1[2] * 65536) +
-            (array1[3] * 16777216);  // Let's take and then randomize EXP
-          for (f = 0; f <= 3; f++) array1[f] = 0;
+
+          // Let's take and then randomize EXP
+          d = read32(memblock+i);
           if ((d > 1) && (d < 10000000)) {
             f = d / 10;
             if (d < 10) f = 1;
@@ -859,30 +798,11 @@ int main() {
             f = (f * 2) + 1;
             d = simple_rand() % f + g;
           }
-           // Going to reconvert it back...
-          while (d >= 256) {
-            while (d >= 65536) {
-              while (d >= 16777216) {
-                array1[3] = array1[3] + 1;
-                d = d - 16777216;
-              }
-              if (d >= 65536) {
-                array1[2] = array1[2] + 1;
-                d = d - 65536;
-              }
-            }
-            if (d >= 256) {
-              array1[1] = array1[1] + 1;
-              d = d - 256;
-            }
-          }
-          array1[0] = d;
-          for (f = 0; f <= 3; f++) memblock[i + f] = array1[f];
+          write32(memblock+i, d);
           i = i + 4;
-          for (f = 0; f <= 3; f++) array1[f] = (unsigned char) memblock[i + f];
-          d = array1[0] + (array1[1] * 256) + (array1[2] * 65536) +
-            (array1[3] * 16777216);  // Let's take and then randomize Money
-          for (f = 0; f <= 3; f++) array1[f] = 0;
+
+          // Let's take and then randomize Money
+          d = read32(memblock+i);
           if ((d > 1) && (d < 10000000)) {
             f = d / 10;
             if (d < 10) f = 1;
@@ -890,26 +810,9 @@ int main() {
             f = (f * 2) + 1;
             d = simple_rand() % f + g;
           }
-           // Going to reconvert it back...
-          while (d >= 256) {
-            while (d >= 65536) {
-              while (d >= 16777216) {
-                array1[3] = array1[3] + 1;
-                d = d - 16777216;
-              }
-              if (d >= 65536) {
-                array1[2] = array1[2] + 1;
-                d = d - 65536;
-              }
-            }
-            if (d >= 256) {
-              array1[1] = array1[1] + 1;
-              d = d - 256;
-            }
-          }
-          array1[0] = d;
-          for (f = 0; f <= 3; f++) memblock[i + f] = array1[f];
+          write32(memblock+i, d);
           i = i + 4;
+
           if (t != 19) {
             if (enemyweakness[1][0] == 0) {
               array1[0] = 230;  // Let's make the game print correct weaknesses
@@ -1075,10 +978,8 @@ int main() {
             (t != 92) && (t != 101) && (t != 111) && (t != 133) && (t != 141) &&
             (t != 142) && (t != 145) && (t != 160) && (t != 162) &&
             (t != 163) && (t != 169) && (t != 180) && (t != 181)) {
-            for (f = 0; f <= 3; f++) array1[f] = (unsigned char) memblock[i + f];
-            enespr[t] =
-              array1[0] + (array1[1] * 256) + (array1[2] * 65536) +
-              (array1[3] * 16777216);  // Let's take and then randomize HP
+            // Let's take and then randomize HP
+            enespr[t] = read32(memblock+i);
             eneove[g] = t;
             g = g + 1;
           }
@@ -1098,12 +999,8 @@ int main() {
             (t != 92) && (t != 101) && (t != 111) && (t != 133) && (t != 141) &&
             (t != 142) && (t != 145) && (t != 160) && (t != 162) &&
             (t != 163) && (t != 169) && (t != 180) && (t != 181)) {
-            for (f = 0; f <= 3; f++) array1[f] = (unsigned char) memblock[i + f];
-            enesprsha[0][t] = array1[0] + (array1[1] * 256) +
-              (array1[2] * 65536) + (array1[3] * 16777216);
-            for (f = 4; f <= 5; f++)
-              array1[f - 4] = (unsigned char) memblock[i + f];
-            enesprsha[1][t] = array1[0] + (array1[1] * 256);
+            enesprsha[0][t] = read32(memblock+i);
+            enesprsha[1][t] = read16(memblock+i+4);
           }
           i = i + 6;
           t = t + 1;
@@ -1121,9 +1018,7 @@ int main() {
             (t != 92) && (t != 101) && (t != 111) && (t != 133) && (t != 141) &&
             (t != 142) && (t != 145) && (t != 160) && (t != 162) &&
             (t != 163) && (t != 169) && (t != 180) && (t != 181)) {
-            for (f = 0; f <= 3; f++) array1[f] = (unsigned char) memblock[i + f];
-            enesprpal[t] = array1[0] + (array1[1] * 256) + (array1[2] * 65536) +
-              (array1[3] * 16777216);
+            enesprpal[t] = read32(memblock+i);
           }
           i = i + 4;
           t = t + 1;
@@ -1142,9 +1037,7 @@ int main() {
             (t != 92) && (t != 101) && (t != 111) && (t != 133) && (t != 141) &&
             (t != 142) && (t != 145) && (t != 160) && (t != 162) &&
             (t != 163) && (t != 169) && (t != 180) && (t != 181)) {
-            for (f = 0; f <= 3; f++) array1[f] = (unsigned char) memblock[i + f];
-            enesprinfo[t] = array1[0] + (array1[1] * 256) + (array1[2] * 65536) +
-              (array1[3] * 16777216);
+            enesprinfo[t] = read32(memblock+i);
           }
           i = i + 4;
           t = t + 1;
@@ -1165,28 +1058,9 @@ int main() {
             for (f = 0; f <= 3; f++) array1[f] = 0;
             f = simple_rand() % g;
             d = eneove[f];
-            f = enespr[d];
             enearra[t] = d;  // Making sure Sprites get the correct Arrangements
              // and Palettes
-            while (f >= 256) {
-              while (f >= 65536) {
-                while (f >= 16777216) {
-                  array1[3] = array1[3] + 1;
-                  f = f - 16777216;
-                }
-                if (f >= 65536) {
-                  array1[2] = array1[2] + 1;
-                  f = f - 65536;
-                }
-              }
-              if (f >= 256) {
-                array1[1] = array1[1] + 1;
-                f = f - 256;
-              }
-            }
-            array1[0] = f;
-            for (f = 0; f <= 3; f++)
-              memblock[i + f] = array1[f];  // Putting back pointer
+            write32(memblock+i, enespr[d]);
           }
           i = i + 4;
           t = t + 1;
@@ -1206,34 +1080,8 @@ int main() {
             (t != 163) && (t != 169) && (t != 180) && (t != 181)) {
             for (f = 0; f <= 3; f++) array1[f] = 0;
             d = enearra[t];
-            f = enesprsha[0][d];
-            while (f >= 256) {
-              while (f >= 65536) {
-                while (f >= 16777216) {
-                  array1[3] = array1[3] + 1;
-                  f = f - 16777216;
-                }
-                if (f >= 65536) {
-                  array1[2] = array1[2] + 1;
-                  f = f - 65536;
-                }
-              }
-              if (f >= 256) {
-                array1[1] = array1[1] + 1;
-                f = f - 256;
-              }
-            }
-            array1[0] = f;
-            for (f = 0; f <= 3; f++)
-              memblock[i + f] = array1[f];  // Putting back pointer
-            f = enesprsha[1][d];
-            while (f >= 256) {
-              array1[1] = array1[1] + 1;
-              f = f - 256;
-            }
-            array1[0] = f;
-            for (f = 4; f <= 5; f++)
-              memblock[i + f] = array1[f - 4];  // Putting back pointer
+            write32(memblock+i, enesprsha[0][d]);
+            write16(memblock+i+4, enesprsha[1][d]);
           }
           for (f = 0; f <= 3; f++) array1[f] = 0;
           t = t + 1;
@@ -1254,26 +1102,7 @@ int main() {
             (t != 163) && (t != 169) && (t != 180) && (t != 181)) {
             for (f = 0; f <= 3; f++) array1[f] = 0;
             d = enearra[t];
-            f = enesprpal[d];
-            while (f >= 256) {
-              while (f >= 65536) {
-                while (f >= 16777216) {
-                  array1[3] = array1[3] + 1;
-                  f = f - 16777216;
-                }
-                if (f >= 65536) {
-                  array1[2] = array1[2] + 1;
-                  f = f - 65536;
-                }
-              }
-              if (f >= 256) {
-                array1[1] = array1[1] + 1;
-                f = f - 256;
-              }
-            }
-            array1[0] = f;
-            for (f = 0; f <= 3; f++)
-              memblock[i + f] = array1[f];  // Putting back pointer
+            write32(memblock+i, enesprpal[d]);
           }
           t = t + 1;
           i = i + 4;
@@ -1293,48 +1122,22 @@ int main() {
             (t != 163) && (t != 169) && (t != 180) && (t != 181)) {
             for (f = 0; f <= 3; f++) array1[f] = 0;
             d = enearra[t];
-            f = enesprinfo[d];
-            while (f >= 256) {
-              while (f >= 65536) {
-                while (f >= 16777216) {
-                  array1[3] = array1[3] + 1;
-                  f = f - 16777216;
-                }
-                if (f >= 65536) {
-                  array1[2] = array1[2] + 1;
-                  f = f - 65536;
-                }
-              }
-              if (f >= 256) {
-                array1[1] = array1[1] + 1;
-                f = f - 256;
-              }
-            }
-            array1[0] = f;
-            for (f = 0; f <= 3; f++)
-              memblock[i + f] = array1[f];  // Putting back pointer
+            write32(memblock+i, enesprinfo[d]);
           }
           t = t + 1;
           i = i + 4;
         }
       }
       i = 29952424;  // Start of enemy battle graphics pointers
-      t = 0;
       g = 0;
       if (flags[1] == 0) {
         if (flags[2] == 0) {
-          while (t < 257) {
+          for (t = 0; t < 257; t++) {
             d = 0;
-            for (f = 0; f <= 3; f++) array1[f] = (unsigned char) memblock[i + f];
-            enebagraph[0][t] =
-              array1[0] + (array1[1] * 256) + (array1[2] * 65536) +
-              (array1[3] * 16777216);  // Let's take and then randomize HP
-            i = i + 4;
-            for (f = 0; f <= 3; f++) array1[f] = (unsigned char) memblock[i + f];
-            enebagraph[1][t] =
-              array1[0] + (array1[1] * 256) + (array1[2] * 65536) +
-              (array1[3] * 16777216);  // Let's take and then randomize HP
-            i = i + 4;
+            // Let's take and then randomize HP
+            enebagraph[0][t] = read32(memblock+i);
+            enebagraph[1][t] = read32(memblock+i+4);
+            i = i + 8;
             if (enebagraph[1][t] > 48) {
               if (g > 0) {
                 for (f = 0; f < g; f++) {
@@ -1349,7 +1152,6 @@ int main() {
                 g = g + 1;
               }
             }
-            t = t + 1;
           }
           if (g == 0) {
             cout << "\nAn error has occured while randomizing the graphics... "
@@ -1357,187 +1159,42 @@ int main() {
             return 1;
           }
           i = 29957768;  // Start of enemy arrangements pointers
-          t = 0;
-          while (t < 257) {
-            for (f = 0; f <= 3; f++) array1[f] = (unsigned char) memblock[i + f];
-            enebaarra[0][t] = array1[0] + (array1[1] * 256) +
-              (array1[2] * 65536) + (array1[3] * 16777216);
-            i = i + 4;
-            for (f = 0; f <= 3; f++) array1[f] = (unsigned char) memblock[i + f];
-            enebaarra[1][t] = array1[0] + (array1[1] * 256) +
-              (array1[2] * 65536) + (array1[3] * 16777216);
-            i = i + 4;
-            t = t + 1;
+          for (t = 0; t < 257; t++) {
+            enebaarra[0][t] = read32(memblock+i);
+            enebaarra[1][t] = read32(memblock+i+4);
+            i = i + 8;
           }
           i = 29955376;  // Start of enemy graphics palettes pointers
-          t = 0;
-          while (t < 257) {
-            for (f = 0; f <= 3; f++) array1[f] = (unsigned char) memblock[i + f];
-            enebapal[0][t] = array1[0] + (array1[1] * 256) + (array1[2] * 65536) +
-              (array1[3] * 16777216);
-            i = i + 4;
-            for (f = 0; f <= 3; f++) array1[f] = (unsigned char) memblock[i + f];
-            enebapal[1][t] = array1[0] + (array1[1] * 256) + (array1[2] * 65536) +
-              (array1[3] * 16777216);
-            i = i + 4;
-            t = t + 1;
+          for (t = 0; t < 257; t++) {
+            enebapal[0][t] = read32(memblock+i);
+            enebapal[1][t] = read32(memblock+i+4);
+            i = i + 8;
           }
           i = 29952424;
-          t = 0;  // Picked pointer values... Now let's randomize them
+          // Picked pointer values... Now let's randomize them
           d = 0;
-          while (t < 257) {
-            for (f = 0; f <= 3; f++) array1[f] = 0;
+          for (t = 0; t < 257; t++) {
             f = simple_rand() % g;
             d = enefine[f];
-            f = enebagraph[0][d];
             enearra[t] = d;  // Making sure Battle Sprites get the correct
              // Arrangements and Palettes
-            while (f >= 256) {
-              while (f >= 65536) {
-                while (f >= 16777216) {
-                  array1[3] = array1[3] + 1;
-                  f = f - 16777216;
-                }
-                if (f >= 65536) {
-                  array1[2] = array1[2] + 1;
-                  f = f - 65536;
-                }
-              }
-              if (f >= 256) {
-                array1[1] = array1[1] + 1;
-                f = f - 256;
-              }
-            }
-            array1[0] = f;
-            for (f = 0; f <= 3; f++)
-              memblock[i + f] = array1[f];  // Putting back pointer
-            i = i + 4;
-            for (f = 0; f <= 3; f++) array1[f] = 0;
-            f = enebagraph[1][d];
-            while (f >= 256) {
-              while (f >= 65536) {
-                while (f >= 16777216) {
-                  array1[3] = array1[3] + 1;
-                  f = f - 16777216;
-                }
-                if (f >= 65536) {
-                  array1[2] = array1[2] + 1;
-                  f = f - 65536;
-                }
-              }
-              if (f >= 256) {
-                array1[1] = array1[1] + 1;
-                f = f - 256;
-              }
-            }
-            array1[0] = f;
-            for (f = 0; f <= 3; f++)
-              memblock[i + f] = array1[f];  // Putting back second value
-            i = i + 4;
-            t = t + 1;
+            write32(memblock+i, enebagraph[0][enefine[f]]);
+            write32(memblock+i+4, enebagraph[1][enefine[f]]);
+            i = i + 8;
           }
           i = 29957768;
-          t = 0;  // Picked arrangements pointer values... Now let's randomize
-           // them
+          // Picked arrangements pointer values... Now let's randomize them
           d = 0;
-          while (t < 257) {
-            for (f = 0; f <= 3; f++) array1[f] = 0;
-            d = enearra[t];
-            f = enebaarra[0][d];
-            while (f >= 256) {
-              while (f >= 65536) {
-                while (f >= 16777216) {
-                  array1[3] = array1[3] + 1;
-                  f = f - 16777216;
-                }
-                if (f >= 65536) {
-                  array1[2] = array1[2] + 1;
-                  f = f - 65536;
-                }
-              }
-              if (f >= 256) {
-                array1[1] = array1[1] + 1;
-                f = f - 256;
-              }
-            }
-            array1[0] = f;
-            for (f = 0; f <= 3; f++)
-              memblock[i + f] = array1[f];  // Putting back pointer
-            i = i + 4;
-            for (f = 0; f <= 3; f++) array1[f] = 0;
-            f = enebaarra[1][d];
-            while (f >= 256) {
-              while (f >= 65536) {
-                while (f >= 16777216) {
-                  array1[3] = array1[3] + 1;
-                  f = f - 16777216;
-                }
-                if (f >= 65536) {
-                  array1[2] = array1[2] + 1;
-                  f = f - 65536;
-                }
-              }
-              if (f >= 256) {
-                array1[1] = array1[1] + 1;
-                f = f - 256;
-              }
-            }
-            array1[0] = f;
-            for (f = 0; f <= 3; f++)
-              memblock[i + f] = array1[f];  // Putting back second value
-            i = i + 4;
-            t = t + 1;
+          for (t = 0; t < 257; t++) {
+            write32(memblock+i, enebaarra[0][enearra[t]]);
+            write32(memblock+i+4, enebaarra[1][enearra[t]]);
+            i = i + 8;
           }
           i = 29955376;  // Start of enemy graphics palettes pointers
-          t = 0;
-          d = 0;
-          while (t < 257) {
-            for (f = 0; f <= 3; f++) array1[f] = 0;
-            d = enearra[t];
-            f = enebapal[0][d];
-            while (f >= 256) {
-              while (f >= 65536) {
-                while (f >= 16777216) {
-                  array1[3] = array1[3] + 1;
-                  f = f - 16777216;
-                }
-                if (f >= 65536) {
-                  array1[2] = array1[2] + 1;
-                  f = f - 65536;
-                }
-              }
-              if (f >= 256) {
-                array1[1] = array1[1] + 1;
-                f = f - 256;
-              }
-            }
-            array1[0] = f;
-            for (f = 0; f <= 3; f++)
-              memblock[i + f] = array1[f];  // Putting back pointer
-            i = i + 4;
-            for (f = 0; f <= 3; f++) array1[f] = 0;
-            f = enebapal[1][d];
-            while (f >= 256) {
-              while (f >= 65536) {
-                while (f >= 16777216) {
-                  array1[3] = array1[3] + 1;
-                  f = f - 16777216;
-                }
-                if (f >= 65536) {
-                  array1[2] = array1[2] + 1;
-                  f = f - 65536;
-                }
-              }
-              if (f >= 256) {
-                array1[1] = array1[1] + 1;
-                f = f - 256;
-              }
-            }
-            array1[0] = f;
-            for (f = 0; f <= 3; f++)
-              memblock[i + f] = array1[f];  // Putting back second value
-            i = i + 4;
-            t = t + 1;
+          for (t = 0; t < 257; t++) {
+            write32(memblock+i, enebapal[0][enearra[t]]);
+            write32(memblock+i+4, enebapal[1][enearra[t]]);
+            i = i + 8;
           }
           i = 855588;
           t = 0;
