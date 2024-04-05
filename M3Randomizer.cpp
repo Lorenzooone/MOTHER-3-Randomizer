@@ -52,7 +52,7 @@ using std::ofstream;using std::streampos;using std::string;
 // main program
 int main() {
   std:: minstd_rand simple_rand;
-  simple_rand.seed(time(NULL));
+  simple_rand.seed(0/*time(NULL)*/);
   int i = 0, f = 0, t = 0, g = 0, d = 0, character = 0;
   unsigned int array1[4] = {};
   unsigned int charrand[15] = {};
@@ -881,13 +881,17 @@ int main() {
   memblock[i + 1] = static_cast<char> (20);
   memblock[i + 3] = static_cast<char> (224);  // Lets prevent something...
   memblock[i + 9] = static_cast<char> (27);
-  i = 18242596;  // Beginning of Gift Box Table
-  g = 0;
+
   if (RandomizeGiftBoxes) {
-    while (i <= 18253824) {
-      g = (unsigned char) memblock[i];
-      if ((g != 0) && (g != 175) && (g != 182) && (g != 184) && (g != 190) &&
-        (g != 192) && (g != 193) && (g != 197) && (g < 200)) {
+    int f = 0;
+    char* GiftBoxTable = memblock + 18242596;
+    std::unordered_set<int> fixedItems = {
+      0, 175, 182, 184, 190, 192, 193, 197
+    };
+    for (size_t i = 0; i < 702; i++) {
+      unsigned char g = (unsigned char) GiftBoxTable[i*16];
+      if (fixedItems.find(g) == fixedItems.end() &&
+          g < 200) {
         g = simple_rand() % 192 + 1;
         if ((g > 174) && (g <= 180))
           g = g + 1;  // Randomize items in gift boxes
@@ -901,184 +905,51 @@ int main() {
           g = g + 6;
         else if (g >= 191)
           g = g + 7;
-        memblock[i] = g;
+        GiftBoxTable[i*16] = g;
       }
-      i = i + 8;
-      g = (unsigned char) memblock[i];
+      g = (unsigned char) GiftBoxTable[i*16 + 8];
       if ((g == 1) || (g == 33) || (g == 129)) {
         f = simple_rand() % 2;
         if (f == 0)  // Randomize colour of gift boxes
           g = g + 2;
-        memblock[i] = g;
+        GiftBoxTable[i*16 + 8] = g;
       }
-      i = i + 8;
     }
   }
-  i = 21202924;  // Start of enemy sprites...
-  t = 1;
-  g = 0;
+
   if (RandomizeEnemySprites) {
-    while (t <= 185) {
-      if ((t != 1) && (t != 2) && (t != 3) && (t != 5) && (t != 6) &&
-        (t != 7) && (t != 8) && (t != 9) && (t != 11) && (t != 12) &&
-        (t != 13) && (t != 14) && (t != 15) && (t != 16) && (t != 17) &&
-        (t != 19) && (t != 20) && (t != 21) && (t != 22) && (t != 23) &&
-        (t != 24) && (t != 25) && (t != 26) && (t != 27) && (t != 28) &&
-        (t != 29) && (t != 30) && (t != 33) && (t != 40) && (t != 46) &&
-        (t != 56) && (t != 61) && (t != 66) && (t != 84) && (t != 91) &&
-        (t != 92) && (t != 101) && (t != 111) && (t != 133) && (t != 141) &&
-        (t != 142) && (t != 145) && (t != 160) && (t != 162) &&
-        (t != 163) && (t != 169) && (t != 180) && (t != 181)) {
-        // Let's take and then randomize HP
-        enespr[t] = read32(memblock+i);
+    size_t g = 0;
+    char* EnemySpriteTable = memblock + 21202920;
+    char* EneSprShaTable = memblock + 21197428;
+    char* SpritePalettes = memblock + 27530576;
+    char* SpriteInfoTable = memblock + 27543208;
+    std::unordered_set<int> spritesToSkip = { 1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 33, 40, 46, 56, 61, 66, 84, 91, 92, 101, 111, 133, 141, 142, 145, 160, 162, 163, 169, 180, 181 };
+
+    for (size_t t = 1; t <= 185; t++) {
+      if (spritesToSkip.find(t) == spritesToSkip.end()) {
+        enespr[t] = read32(EnemySpriteTable + t * 4);
         eneove[g] = t;
         g = g + 1;
+        enesprsha[0][t] = read32(EneSprShaTable+t*6);
+        enesprsha[1][t] = read16(EneSprShaTable+t*6+4);
+        enesprpal[t] = read32(SpritePalettes+t*4);
+        enesprinfo[t] = read32(SpriteInfoTable+t*4);
       }
-      i = i + 4;
-      t = t + 1;
     }
-    i = 21197434;  // Start of something???
-    t = 1;
-    while (t <= 185) {
-      if ((t != 1) && (t != 2) && (t != 3) && (t != 5) && (t != 6) &&
-        (t != 7) && (t != 8) && (t != 9) && (t != 11) && (t != 12) &&
-        (t != 13) && (t != 14) && (t != 15) && (t != 16) && (t != 17) &&
-        (t != 19) && (t != 20) && (t != 21) && (t != 22) && (t != 23) &&
-        (t != 24) && (t != 25) && (t != 26) && (t != 27) && (t != 28) &&
-        (t != 29) && (t != 30) && (t != 33) && (t != 40) && (t != 46) &&
-        (t != 56) && (t != 61) && (t != 66) && (t != 84) && (t != 91) &&
-        (t != 92) && (t != 101) && (t != 111) && (t != 133) && (t != 141) &&
-        (t != 142) && (t != 145) && (t != 160) && (t != 162) &&
-        (t != 163) && (t != 169) && (t != 180) && (t != 181)) {
-        enesprsha[0][t] = read32(memblock+i);
-        enesprsha[1][t] = read16(memblock+i+4);
-      }
-      i = i + 6;
-      t = t + 1;
-    }
-    i = 27530580;  // Start of sprite palettes
-    t = 1;
-    while (t <= 185) {
-      if ((t != 1) && (t != 2) && (t != 3) && (t != 5) && (t != 6) &&
-        (t != 7) && (t != 8) && (t != 9) && (t != 11) && (t != 12) &&
-        (t != 13) && (t != 14) && (t != 15) && (t != 16) && (t != 17) &&
-        (t != 19) && (t != 20) && (t != 21) && (t != 22) && (t != 23) &&
-        (t != 24) && (t != 25) && (t != 26) && (t != 27) && (t != 28) &&
-        (t != 29) && (t != 30) && (t != 33) && (t != 40) && (t != 46) &&
-        (t != 56) && (t != 61) && (t != 66) && (t != 84) && (t != 91) &&
-        (t != 92) && (t != 101) && (t != 111) && (t != 133) && (t != 141) &&
-        (t != 142) && (t != 145) && (t != 160) && (t != 162) &&
-        (t != 163) && (t != 169) && (t != 180) && (t != 181)) {
-        enesprpal[t] = read32(memblock+i);
-      }
-      i = i + 4;
-      t = t + 1;
-    }
-    i = 27543212;  // Start of sprite info... What the hell is this for? I'll
-     // just pretend I do know...
-    t = 1;
-    while (t <= 185) {
-      if ((t != 1) && (t != 2) && (t != 3) && (t != 5) && (t != 6) &&
-        (t != 7) && (t != 8) && (t != 9) && (t != 11) && (t != 12) &&
-        (t != 13) && (t != 14) && (t != 15) && (t != 16) && (t != 17) &&
-        (t != 19) && (t != 20) && (t != 21) && (t != 22) && (t != 23) &&
-        (t != 24) && (t != 25) && (t != 26) && (t != 27) && (t != 28) &&
-        (t != 29) && (t != 30) && (t != 33) && (t != 40) && (t != 46) &&
-        (t != 56) && (t != 61) && (t != 66) && (t != 84) && (t != 91) &&
-        (t != 92) && (t != 101) && (t != 111) && (t != 133) && (t != 141) &&
-        (t != 142) && (t != 145) && (t != 160) && (t != 162) &&
-        (t != 163) && (t != 169) && (t != 180) && (t != 181)) {
-        enesprinfo[t] = read32(memblock+i);
-      }
-      i = i + 4;
-      t = t + 1;
-    }
-    i = 21202924;  // Start of enemy sprites...
-    t = 1;
-    while (t <= 185) {
-      if ((t != 1) && (t != 2) && (t != 3) && (t != 5) && (t != 6) &&
-        (t != 7) && (t != 8) && (t != 9) && (t != 11) && (t != 12) &&
-        (t != 13) && (t != 14) && (t != 15) && (t != 16) && (t != 17) &&
-        (t != 19) && (t != 20) && (t != 21) && (t != 22) && (t != 23) &&
-        (t != 24) && (t != 25) && (t != 26) && (t != 27) && (t != 28) &&
-        (t != 29) && (t != 30) && (t != 33) && (t != 40) && (t != 46) &&
-        (t != 56) && (t != 61) && (t != 66) && (t != 84) && (t != 91) &&
-        (t != 92) && (t != 101) && (t != 111) && (t != 133) && (t != 141) &&
-        (t != 142) && (t != 145) && (t != 160) && (t != 162) &&
-        (t != 163) && (t != 169) && (t != 180) && (t != 181)) {
-        for (f = 0; f <= 3; f++) array1[f] = 0;
+    for (size_t t = 1; t <= 185; t++) {
+      if (spritesToSkip.find(t) == spritesToSkip.end()) {
         f = simple_rand() % g;
         d = eneove[f];
-        enearra[t] = d;  // Making sure Sprites get the correct Arrangements
-         // and Palettes
-        write32(memblock+i, enespr[d]);
+        enearra[t] = d;
+        write32(EnemySpriteTable+t*4, enespr[d]);
+        write32(EneSprShaTable+t*6, enesprsha[0][d]);
+        write16(EneSprShaTable+t*6+4, enesprsha[1][d]);
+        write32(SpritePalettes+t*4, enesprpal[d]);
+        write32(SpriteInfoTable+t*4, enesprinfo[d]);
       }
-      i = i + 4;
-      t = t + 1;
-    }
-    i = 21197434;  // Start of something???
-    t = 1;
-    while (t <= 185) {  // Putting back sprite palette pointers
-      if ((t != 1) && (t != 2) && (t != 3) && (t != 5) && (t != 6) &&
-        (t != 7) && (t != 8) && (t != 9) && (t != 11) && (t != 12) &&
-        (t != 13) && (t != 14) && (t != 15) && (t != 16) && (t != 17) &&
-        (t != 19) && (t != 20) && (t != 21) && (t != 22) && (t != 23) &&
-        (t != 24) && (t != 25) && (t != 26) && (t != 27) && (t != 28) &&
-        (t != 29) && (t != 30) && (t != 33) && (t != 40) && (t != 46) &&
-        (t != 56) && (t != 61) && (t != 66) && (t != 84) && (t != 91) &&
-        (t != 92) && (t != 101) && (t != 111) && (t != 133) && (t != 141) &&
-        (t != 142) && (t != 145) && (t != 160) && (t != 162) &&
-        (t != 163) && (t != 169) && (t != 180) && (t != 181)) {
-        for (f = 0; f <= 3; f++) array1[f] = 0;
-        d = enearra[t];
-        write32(memblock+i, enesprsha[0][d]);
-        write16(memblock+i+4, enesprsha[1][d]);
-      }
-      for (f = 0; f <= 3; f++) array1[f] = 0;
-      t = t + 1;
-      i = i + 6;
-    }
-    i = 27530580;  // Start of sprite palettes
-    t = 1;
-    while (t <= 185) {  // Putting back sprite palette pointers
-      if ((t != 1) && (t != 2) && (t != 3) && (t != 5) && (t != 6) &&
-        (t != 7) && (t != 8) && (t != 9) && (t != 11) && (t != 12) &&
-        (t != 13) && (t != 14) && (t != 15) && (t != 16) && (t != 17) &&
-        (t != 19) && (t != 20) && (t != 21) && (t != 22) && (t != 23) &&
-        (t != 24) && (t != 25) && (t != 26) && (t != 27) && (t != 28) &&
-        (t != 29) && (t != 30) && (t != 33) && (t != 40) && (t != 46) &&
-        (t != 56) && (t != 61) && (t != 66) && (t != 84) && (t != 91) &&
-        (t != 92) && (t != 101) && (t != 111) && (t != 133) && (t != 141) &&
-        (t != 142) && (t != 145) && (t != 160) && (t != 162) &&
-        (t != 163) && (t != 169) && (t != 180) && (t != 181)) {
-        for (f = 0; f <= 3; f++) array1[f] = 0;
-        d = enearra[t];
-        write32(memblock+i, enesprpal[d]);
-      }
-      t = t + 1;
-      i = i + 4;
-    }
-    i = 27543212;
-    t = 1;
-    while (t <= 185) {  // Putting back info pointers
-      if ((t != 1) && (t != 2) && (t != 3) && (t != 5) && (t != 6) &&
-        (t != 7) && (t != 8) && (t != 9) && (t != 11) && (t != 12) &&
-        (t != 13) && (t != 14) && (t != 15) && (t != 16) && (t != 17) &&
-        (t != 19) && (t != 20) && (t != 21) && (t != 22) && (t != 23) &&
-        (t != 24) && (t != 25) && (t != 26) && (t != 27) && (t != 28) &&
-        (t != 29) && (t != 30) && (t != 33) && (t != 40) && (t != 46) &&
-        (t != 56) && (t != 61) && (t != 66) && (t != 84) && (t != 91) &&
-        (t != 92) && (t != 101) && (t != 111) && (t != 133) && (t != 141) &&
-        (t != 142) && (t != 145) && (t != 160) && (t != 162) &&
-        (t != 163) && (t != 169) && (t != 180) && (t != 181)) {
-        for (f = 0; f <= 3; f++) array1[f] = 0;
-        d = enearra[t];
-        write32(memblock+i, enesprinfo[d]);
-      }
-      t = t + 1;
-      i = i + 4;
     }
   }
+
   i = 29952424;  // Start of enemy battle graphics pointers
   g = 0;
   if (RandomizeEnemyStats) {
@@ -1508,3 +1379,5 @@ bool ends_with(string const &a, string const &b) {
     if (*pos_a++ != *pos_b++) return false;
   return true;
 }
+
+
