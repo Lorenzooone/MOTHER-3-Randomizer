@@ -18,27 +18,31 @@
 #include <sstream>
 
 uint16_t read16(const char* buffer) {
-  return buffer[0] + 
-         (buffer[1] * 256);
+  const unsigned char* buf = (const unsigned char*)buffer;
+  return buf[0] + 
+         (buf[1] * 256);
 }
 
 void write16(char* buffer, uint16_t value) {
-  buffer[1] = (value >> 8) & 0xFF;
-  buffer[0] = (value) & 0xFF;
+  unsigned char* buf = (unsigned char*)buffer;
+  buf[1] = (value >> 8) & 0xFF;
+  buf[0] = (value) & 0xFF;
 }
 
 uint32_t read32(const char* buffer) {
-  return buffer[0] + 
-         (buffer[1] * 256) + 
-         (buffer[2] * 65536) + 
-         (buffer[3] * 16777216);
+  const unsigned char* buf = (const unsigned char*)buffer;
+  return buf[0] + 
+         (buf[1] * 256) + 
+         (buf[2] * 65536) + 
+         ((uint32_t)buf[3] * 16777216);
 }
 
 void write32(char* buffer, uint32_t value) {
-  buffer[3] = (value >> 24);
-  buffer[2] = (value >> 16) & 0xFF;
-  buffer[1] = (value >> 8) & 0xFF;
-  buffer[0] = (value) & 0xFF;
+  unsigned char* buf = (unsigned char*)buffer;
+  buf[3] = (value >> 24);
+  buf[2] = (value >> 16) & 0xFF;
+  buf[1] = (value >> 8) & 0xFF;
+  buf[0] = (value) & 0xFF;
 }
 
 // reading an entire binary file
@@ -357,7 +361,7 @@ int main() {
             t = t + 1;
           }
           i = i - 2;
-          g = (unsigned char) memblock[i] + ((unsigned char) memblock[i + 1] * 256);
+          g = read16(memblock+i);
           if (g > 0) {
             charrand[character] = g;
             character = character + 1;
@@ -379,15 +383,10 @@ int main() {
         while (t < 15) {
           d = simple_rand() % character;
           f = charrand[d];
-          d = (unsigned char) memblock[i] + ((unsigned char) memblock[i + 1] * 256);
+          d = read16(memblock+i);
           if (d > 0) {
             charsound[t] = f;
-            while (f >= 256) {
-              array1[1] = array1[1] + 1;
-              f = f - 256;
-            }
-            array1[0] = f;
-            for (d = 0; d <= 1; d++) memblock[i + d] = array1[d];
+            write16(memblock+i, f);
           }
           i = i + 324;
           t = t + 1;
@@ -609,9 +608,9 @@ int main() {
                 g = 0;
               else
                 g = simple_rand() % 201;
-              if ((g > enemyweakness[1][1]) && (g >= 100) && (f != 8) &&
+              if ((g > (int)enemyweakness[1][1]) && (g >= 100) && (f != 8) &&
                 (f != 9) && (f != 1) && (f != 13) && (f != 14) && (f != 15)) {
-                if (g > enemyweakness[1][0]) {
+                if (g > (int)enemyweakness[1][0]) {
                   enemyweakness[1][1] = enemyweakness[1][0];
                   enemyweakness[1][0] = g;
                   enemyweakness[0][1] = enemyweakness[0][0];
@@ -622,15 +621,7 @@ int main() {
                 }
               }
               if (f == 15) g = 100;
-              while (g >= 256) {
-                array1[1] = array1[1] + 1;
-                g = g - 256;
-              }
-              array1[0] = g;
-              for (g = 0; g <= 1; g++)
-                memblock[i + g] = array1[g];  // Putting back
-              array1[0] = 0;
-              array1[1] = 0;
+              write16(memblock+i, g);
             }
             i = i + 2;
             f = f + 1;
@@ -662,13 +653,9 @@ int main() {
           enedatahigh[t] =
             (unsigned char) memblock[i];  // Get enemy sprite in-battle height
           i = i + 4;
-          eneheig[t] =
-            (unsigned char) memblock[i] + ((unsigned char) memblock[i + 1] *
-              256);  // Get memo height modifiers
+          eneheig[t] = read16(memblock+i); // Get memo height modifiers
           i = i + 2;
-          enedatafrba[t] = (unsigned char) memblock[i] +
-            ((unsigned char) memblock[i + 1] *
-              256);  // Get in-battle height modifiers
+          enedatafrba[t] = read16(memblock+i);  // Get in-battle height modifiers
           i = i + 2;
            // enememotur[t] = (unsigned char)memblock[i];  //Get enemy turnability
            // in Battle Memory
@@ -869,8 +856,7 @@ int main() {
       if (flags[6] == 0) {
         while (t < 256) {
           for (f = 0; f < 2; f++) array1[f] = (unsigned char) memblock[i + f];
-          d = array1[0] +
-            (array1[1] * 256);  // Let's take and then randomize Price
+          d = read16(memblock+i);  // Let's take and then randomize Price
           for (f = 0; f <= 3; f++) array1[f] = 0;
           if (d > 1) {
             f = d / 5;
@@ -879,14 +865,7 @@ int main() {
             f = (f * 2) + 1;
             d = simple_rand() % f + g;
           }
-           // Going to reconvert it back...
-          while (d >= 256) {
-            array1[1] = array1[1] + 1;
-            d = d - 256;
-          }
-          array1[0] = d;
-          for (f = 0; f <= 1; f++)
-            memblock[i + f] = array1[f];  // Putting back Price
+          write16(memblock+i, d);
           t = t + 1;
           i = i + 108;
         }
@@ -1215,15 +1194,7 @@ int main() {
             array1[1] = 0;
             d = enearra[t + 1];
             if ((d - 1) < 0) d = 255;
-            f = enedatafrba[d - 1];
-            while (f >= 256) {
-              array1[1] = array1[1] + 1;
-              f = f - 256;
-            }
-            array1[0] = f;
-            for (f = 0; f <= 1; f++)
-              memblock[i + f] =
-              array1[f];  // Putting back height values in-battle modifiers
+            write16(memblock+i, enedatafrba[d-1]); // Putting back height values in-battle modifiers
             i = i + 144;
             t = t + 1;
           }
@@ -1234,14 +1205,7 @@ int main() {
             array1[1] = 0;
             d = enearra[t + 1];
             if ((d - 1) < 0) d = 255;
-            f = eneheig[d - 1];
-            while (f >= 256) {
-              array1[1] = array1[1] + 1;
-              f = f - 256;
-            }
-            array1[0] = f;
-            for (f = 0; f <= 1; f++)
-              memblock[i + f] = array1[f];  // Putting back height values in
+            write16(memblock+i, eneheig[d-1]); // Putting back height values in
              // Battle Memory Modifiers
             i = i + 144;
             t = t + 1;
@@ -1544,28 +1508,11 @@ int main() {
               g = simple_rand() % 5;   // Randomize Throwable items typing
               memblock[i + 64] = g;
             }
-            array1[0] = 0;
-            array1[1] = 0;
             g = simple_rand() % 300 + 1;
             d = g;
-            while (g >= 256) {
-              array1[1] = array1[1] + 1;
-              g = g - 256;
-            }
-            array1[0] = g;
-            g = i + 74;
-            for (f = 0; f <= 1; f++) memblock[g + f] = array1[f];
-            array1[0] = 0;
-            array1[1] = 0;
-            g = simple_rand() % 50 + 1;
-            g = g + d;
-            while (g >= 256) {
-              array1[1] = array1[1] + 1;
-              g = g - 256;
-            }
-            array1[0] = g;
-            g = i + 76;
-            for (f = 0; f <= 1; f++) memblock[g + f] = array1[f];
+            write16(memblock+i+74, g);
+            g += simple_rand() % 50 + 1;
+            write16(memblock+i+76, g);
           }
         }
         i = i + 108;
