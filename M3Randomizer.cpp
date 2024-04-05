@@ -4,17 +4,11 @@
 // Copyright 2019 Lorenzooone
 
 #include <stdlib.h>
-
 #include <time.h>
-
 #include <random>
-
 #include <iostream>
-
 #include <fstream>
-
 #include <string>
-
 #include <sstream>
 
 uint16_t read16(const char* buffer) {
@@ -60,7 +54,6 @@ int main() {
     simple_rand.seed(time(NULL));
     streampos size;
     int i = 0, f = 0, t = 0, g = 0, d = 0, character = 0;
-    unsigned int flags[10];
     unsigned int array1[4];
     unsigned int charrand[15];
     unsigned int enemyweakness[2][2];
@@ -86,9 +79,19 @@ int main() {
     unsigned char option;
     char * memblock;
     string input, end = ".gba", neo;  // ROM Name
-    for (i = 0; i <= 9; i++) flags[i] = 0;
+    bool RandomizeCharacterStats = true,
+         RandomizeEnemyStats = true,
+         RandomizeEnemyGraphics = true,
+         RandomizeSeizureRiskyBackgrounds = true,
+         RandomizeEnemySprites = true,
+         RandomizeGiftBoxes = true,
+         RandomizeShopsAndItemPrices = true,
+         RandomizeItemStats = true,
+         RandomizeItemGraphics = true;
+    bool exitMainMenu = false;
+    
     i = 0;
-    while (f == 0) {
+    while (not exitMainMenu) {
       cout << "\nType a number to choose one of the following options:\n\n1) "
       "Randomize MOTHER 3!\n2) Choose what you want to randomize!\n3) "
       "Credits!\n0) Exit.\n";
@@ -96,81 +99,81 @@ int main() {
       if (option == '0')
         return 1;
       else if (option == '1')
-        f = 1;
+        exitMainMenu = true;
       else if (option == '2') {
-        while (g == 0) {
+        bool exitMenu = false;
+        while (not exitMenu) {
           cout << "\nType a number to choose one of the following options:\n\n1) "
           "-Playable Character stats randomization, ";
-          if (flags[0] == 0)
+          if (RandomizeCharacterStats)
             cout << "Turn OFF.";
           else
             cout << "Turn ON.";
           cout << "\n2) -Enemy stats randomization, ";
-          if (flags[1] == 0)
+          if (RandomizeEnemyStats)
             cout << "Turn OFF.";
           else
             cout << "Turn ON.";
           cout << "\n3) --Enemy graphics randomization, ";
-          if (flags[1] == 0) {
-            if (flags[2] == 0)
+          if (RandomizeEnemyStats) {
+            if (RandomizeEnemyGraphics)
               cout << "Turn OFF.";
             else
               cout << "Turn ON.";
           } else
             cout << "requires Enemy stats randomization.";
           cout << "\n4) --Enemy seizure risky backgrounds, ";
-          if (flags[1] == 0) {
-            if (flags[3] == 0)
+          if (RandomizeEnemyStats) {
+            if (RandomizeSeizureRiskyBackgrounds)
               cout << "Turn ON.";
             else
               cout << "Turn OFF.";
           } else
             cout << "requires Enemy stats randomization.";
           cout << "\n5) -Enemy sprites randomization, ";
-          if (flags[4] == 0)
+          if (RandomizeEnemySprites)
             cout << "Turn OFF.";
           else
             cout << "Turn ON.";
           cout << "\n6) -Gift boxes randomization, ";
-          if (flags[5] == 0)
+          if (RandomizeGiftBoxes)
             cout << "Turn OFF.";
           else
             cout << "Turn ON.";
           cout << "\n7) -Shops and item prices randomization, ";
-          if (flags[6] == 0)
+          if (RandomizeShopsAndItemPrices)
             cout << "Turn OFF.";
           else
             cout << "Turn ON.";
           cout << "\n8) -Item stats randomization, ";
-          if (flags[7] == 0)
+          if (RandomizeItemStats)
             cout << "Turn OFF.";
           else
             cout << "Turn ON.";
           cout << "\n9) -Item graphics randomization, ";
-          if (flags[8] == 0)
+          if (RandomizeItemGraphics)
             cout << "Turn OFF.";
           else
             cout << "Turn ON.";
           cout << "\n\n0) -Go to the previous menu.\n";
           cin >> option;
           if (option == '0')
-            g = 1;
+            exitMenu = true;
           else if ((option == '1') || (option == '2') || (option == '3') ||
             (option == '4') || (option == '5') || (option == '6') ||
             (option == '7') || (option == '8') || (option == '9')) {
-            d = (unsigned char) option - 49;
             cout << "\n\nThanks for choosing option " << (unsigned char) option <<
               ", here's the updated menu!\n\n\n";
-            if (flags[d] == 0) {
-              flags[d] = 1;
-              if ((d == 0) || (d == 1) || (d == 4) || (d == 5) || (d == 6) ||
-                (d == 7) || (d == 8))
-                flags[9] = flags[9] + 1;
-            } else {
-              flags[d] = 0;
-              if ((d == 0) || (d == 1) || (d == 4) || (d == 5) || (d == 6) ||
-                (d == 7) || (d == 8))
-                flags[9] = flags[9] - 1;
+            switch(option) {
+              case '1': RandomizeCharacterStats = not RandomizeCharacterStats; break;
+              case '2': RandomizeEnemyStats = not RandomizeEnemyStats; break;
+              case '3': RandomizeEnemyGraphics = not RandomizeEnemyGraphics; break;
+              case '4': RandomizeSeizureRiskyBackgrounds = not RandomizeSeizureRiskyBackgrounds; break;
+              case '5': RandomizeEnemySprites = not RandomizeEnemySprites; break;
+              case '6': RandomizeGiftBoxes = not RandomizeGiftBoxes; break;
+              case '7': RandomizeShopsAndItemPrices = not RandomizeShopsAndItemPrices; break;
+              case '8': RandomizeItemStats = not RandomizeItemStats; break;
+              case '9': RandomizeItemGraphics = not RandomizeItemGraphics; break;
             }
           } else
             cout << "\nPlease, enter again the number.\n";
@@ -261,7 +264,7 @@ int main() {
       i = 837176;  // Start of characters stat table
       g = 0;
       f = 0;
-      if (flags[0] == 0) {
+      if (RandomizeCharacterStats) {
         while (i < 842024) {
           while (t <= 10) {
             // Let's take and then randomize HP of character
@@ -401,7 +404,7 @@ int main() {
       f = 0;
       i = 855480;  // Start of enemy table
       i = i + 4;
-      if (flags[1] == 0) {
+      if (RandomizeEnemyStats) {
         while (t < 255) {
           for (g = 0; g <= 1; g++) {
             for (f = 0; f <= 1; f++) enemyweakness[g][f] = 0;
@@ -414,7 +417,7 @@ int main() {
           if ((g == 189) || (g == 190) || (g == 191)) g = 192;
           if ((g == 193) || (g == 194)) g = 195;
           if ((g == 201) || (g == 202)) g = 203;
-          if (flags[3] == 0) {
+          if (RandomizeSeizureRiskyBackgrounds) {
             if (g == 221) g = 220;
           }
           memblock[i] = g;
@@ -853,7 +856,7 @@ int main() {
        // Let's randomize items price
       t = 0;
       i = 938258;
-      if (flags[6] == 0) {
+      if (RandomizeShopsAndItemPrices) {
         while (t < 256) {
           for (f = 0; f < 2; f++) array1[f] = (unsigned char) memblock[i + f];
           d = read16(memblock+i);  // Let's take and then randomize Price
@@ -911,7 +914,7 @@ int main() {
       memblock[i + 9] = static_cast<char> (27);
       i = 18242596;  // Beginning of Gift Box Table
       g = 0;
-      if (flags[5] == 0) {
+      if (RandomizeGiftBoxes) {
         while (i <= 18253824) {
           g = (unsigned char) memblock[i];
           if ((g != 0) && (g != 175) && (g != 182) && (g != 184) && (g != 190) &&
@@ -945,7 +948,7 @@ int main() {
       i = 21202924;  // Start of enemy sprites...
       t = 1;
       g = 0;
-      if (flags[4] == 0) {
+      if (RandomizeEnemySprites) {
         while (t <= 185) {
           if ((t != 1) && (t != 2) && (t != 3) && (t != 5) && (t != 6) &&
             (t != 7) && (t != 8) && (t != 9) && (t != 11) && (t != 12) &&
@@ -1109,8 +1112,8 @@ int main() {
       }
       i = 29952424;  // Start of enemy battle graphics pointers
       g = 0;
-      if (flags[1] == 0) {
-        if (flags[2] == 0) {
+      if (RandomizeEnemyStats) {
+        if (RandomizeEnemyGraphics) {
           for (t = 0; t < 257; t++) {
             d = 0;
             // Let's take and then randomize HP
@@ -1235,7 +1238,7 @@ int main() {
     }
     i = 26426416;   // Get items garphics
     t = 0;
-    if (flags[8] == 0) {
+    if (RandomizeItemGraphics) {
       character = 0;
       while (t <= 241) {
         for (g = 0; g <= 287; g++)
@@ -1280,7 +1283,7 @@ int main() {
     }
     i = 938360;   // Randomize item damage, attack and recovery
     t = 0;
-    if (flags[7] == 0) {
+    if (RandomizeItemStats) {
       while (t < 255) {
         if (t != 156) {
           d = (unsigned char)memblock[i];
