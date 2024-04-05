@@ -10,6 +10,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <unordered_set>
 
 uint16_t read16(const char* buffer) {
   const unsigned char* buf = (const unsigned char*)buffer;
@@ -223,15 +224,12 @@ int main() {
   file3.write(memblock, size);
   file3.close();
   ofstream file2(input, ios::out | ios::binary);
-  i = 814434;  // Start of enemy height in battle memory table
-  t = 0;
-  while (t < 255) {
-    enememo[t] = (unsigned char) memblock[i];  // Find out different height
-     // values and (maybe) where
-     // they're pulled from...
-    i = i + 2;
-    t = t + 1;
+
+  char* EnemyHeightInBattle = memblock + 814434;
+  for (size_t i = 0; i < 255; i++) {
+    enememo[i] = EnemyHeightInBattle[i*2];
   }
+  
   t = 0;
   i = 837176;  // Start of characters stat table
   g = 0;
@@ -829,10 +827,11 @@ int main() {
   t = 0;
   i = 938258;
   if (RandomizeShopsAndItemPrices) {
-    while (t < 256) {
-      for (f = 0; f < 2; f++) array1[f] = (unsigned char) memblock[i + f];
-      d = read16(memblock+i);  // Let's take and then randomize Price
-      for (f = 0; f <= 3; f++) array1[f] = 0;
+    int f = 0, g = 0, d = 0;
+    // https://datacrystal.tcrf.net/wiki/MOTHER_3/Item_data contains the data format
+    char* ItemTable = memblock + 938248;
+    for (size_t i = 0; i < 256; i++) {
+      d = read16(ItemTable + i * 108 + 10);
       if (d > 1) {
         f = d / 5;
         if (d < 5) f = 1;
@@ -840,9 +839,7 @@ int main() {
         f = (f * 2) + 1;
         d = simple_rand() % f + g;
       }
-      write16(memblock+i, d);
-      t = t + 1;
-      i = i + 108;
+      write16(ItemTable + i * 108 + 10, d);
     }
     t = 0;
     i = 965896;
