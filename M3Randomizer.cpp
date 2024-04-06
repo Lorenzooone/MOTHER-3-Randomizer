@@ -676,11 +676,10 @@ int main() {
       i = i + 4;
 
       if (t != 19) {
-        unsigned int array1[4] = {};
         if (enemyweakness[1][0] == 0) {
-          memblock[i+0] = 230;  // Let's make the game print correct weaknesses
+          memblock[i+0] = (char)230;  // Let's make the game print correct weaknesses
           memblock[i+1] = 1;
-          memblock[i+2] = 230;
+          memblock[i+2] = (char)230;
           memblock[i+3] = 1;
         } else if (enemyweakness[1][1] == 0) {
           if (enemyweakness[0][0] <= 7)
@@ -694,7 +693,7 @@ int main() {
           else
             memblock[i+0] = enemyweakness[0][0] - 13;
           memblock[i+1] = 2;
-          memblock[i+2] = 230;
+          memblock[i+2] = (char)230;
           memblock[i+3] = 1;
         } else {
           if (enemyweakness[0][0] <= 7)
