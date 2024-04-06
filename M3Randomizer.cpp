@@ -894,50 +894,26 @@ void RandomizeEnemyGraphics(char* memblock) {
 void RandomizeItemGraphics(char* memblock) {
   if (not ShouldRandomizeItemGraphics) return;
 
-  int i = 0, f = 0, t = 0, g = 0, d = 0;
-  i = 26426416;   // Get items garphics
+  char* ItemGraphics = memblock + 26426416;
+  char* ItemPalette = memblock + 21192521;
   unsigned int itemgraph[256][288] = {};
   unsigned int itempal[256] = {};
-  unsigned int itemnumber[256] = {};
-  while (t <= 241) {
-    for (g = 0; g <= 287; g++)
-      itemgraph[t][g] = (unsigned char)memblock[i + g];
-    t = t + 1;
-    i = i + 288;
-  }
-  t = 0;
-  i = 21192521;
-  while (t <= 255) {
-    itempal[t] = (unsigned char)memblock[i];
-    t = t + 1;
-    i = i + 12;
-  }
-  g = 0;
-  t = 0;
-  i = 26426416;   // Randomize items garphics
-  while (t <= 255) {
-    if (t != 144) {
-      while (g == 0) {
-        d = simple_rand() % 242;
-        if (d != 144) g = 1;
-      }
-      for (g = 0; g <= 287; g++) memblock[i + g] = itemgraph[d][g];
-      itemnumber[t] = d;
+  for (size_t t = 0; t < 242; t++) {
+    for (size_t g = 0; g <= 287; g++) {
+      itemgraph[t][g] = (unsigned char)ItemGraphics[t*288 + g];
     }
-    t = t + 1;
-    i = i + 288;
-    g = 0;
   }
-  t = 0;
-  i = 21192521;
-  while (t <= 255) {
-    d = itemnumber[t];
-    if (t != 144) {
-      f = itempal[d];
-      memblock[i] = f;
-    }
-    t = t + 1;
-    i = i + 12;
+  for (size_t t = 0; t < 256; t++) {
+    itempal[t] = (unsigned char)ItemPalette[t*12];
+  }
+  for (size_t t = 0; t < 256; t++) {
+    if (t == 144) continue;
+    size_t d = 0;
+    do {
+      d = simple_rand() % 242;
+    } while (d == 144);
+    for (size_t g = 0; g <= 287; g++) ItemGraphics[t*288 + g] = itemgraph[d][g];
+    ItemPalette[t*12] = itempal[d];
   }
 }
 
