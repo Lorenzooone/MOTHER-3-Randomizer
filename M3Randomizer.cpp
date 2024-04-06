@@ -52,7 +52,7 @@ using std::ofstream;using std::streampos;using std::string;
 // main program
 int main() {
   std:: minstd_rand simple_rand;
-  simple_rand.seed(0/*time(NULL)*/);
+  simple_rand.seed(time(NULL));
   int i = 0, f = 0, t = 0, g = 0, d = 0, character = 0;
   unsigned int array1[4] = {};
   unsigned int charrand[15] = {};
@@ -65,7 +65,6 @@ int main() {
   unsigned int enesprinfo[257] = {};
   unsigned int enesprpal[257] = {};
   unsigned int enefine[257] = {};
-  unsigned int enearra[257] = {};
   unsigned int eneove[257] = {};
   unsigned int enedatahigh[257] = {};
   unsigned int enedatafrba[257] = {};
@@ -372,6 +371,8 @@ int main() {
   d = 0;
   g = 0;
   f = 0;
+  [[maybe_unused]] char* EnemyTable = memblock + 855480;
+  (void)EnemyTable;
   i = 855480;  // Start of enemy table
   i = i + 4;
   if (RandomizeEnemyStats) {
@@ -940,7 +941,6 @@ int main() {
       if (spritesToSkip.find(t) == spritesToSkip.end()) {
         f = simple_rand() % g;
         d = eneove[f];
-        enearra[t] = d;
         write32(EnemySpriteTable+t*4, enespr[d]);
         write32(EneSprShaTable+t*6, enesprsha[0][d]);
         write16(EneSprShaTable+t*6+4, enesprsha[1][d]);
@@ -950,132 +950,68 @@ int main() {
     }
   }
 
-  i = 29952424;  // Start of enemy battle graphics pointers
-  g = 0;
-  if (RandomizeEnemyStats) {
-    if (RandomizeEnemyGraphics) {
-      for (t = 0; t < 257; t++) {
-        d = 0;
-        // Let's take and then randomize HP
-        enebagraph[0][t] = read32(memblock+i);
-        enebagraph[1][t] = read32(memblock+i+4);
-        i = i + 8;
-        if (enebagraph[1][t] > 48) {
-          if (g > 0) {
-            for (f = 0; f < g; f++) {
-              if (enebagraph[1][t] == enebagraph[1][f]) {
-                if (d >= 3) f = g;
-                d = d + 1;  // Prevent too many copies, like PORKY bots
-              }
+  if (RandomizeEnemyStats and RandomizeEnemyGraphics) {
+    size_t f = 0;
+    size_t g = 0;
+    char* EnemyBattleGraphicsPointers = memblock + 29952424;
+    char* EnemyArrangementPointers = memblock + 29957768;
+    char* EnemyGraphicsPalettePointers = memblock + 29955376;
+    char* EnemyTable = memblock + 855480;
+    for (size_t t = 0; t < 257; t++) {
+      // Let's take and then randomize HP
+      enebagraph[0][t] = read32(EnemyBattleGraphicsPointers+t*8);
+      enebagraph[1][t] = read32(EnemyBattleGraphicsPointers+t*8+4);
+      enebaarra[0][t] = read32(EnemyArrangementPointers+t*8);
+      enebaarra[1][t] = read32(EnemyArrangementPointers+t*8+4);
+      enebapal[0][t] = read32(EnemyGraphicsPalettePointers+t*8);
+      enebapal[1][t] = read32(EnemyGraphicsPalettePointers+t*8+4);
+
+      size_t d = 0;
+      if (enebagraph[1][t] > 48) {
+        if (g > 0) {
+          for (f = 0; f < g; f++) {
+            if (enebagraph[1][t] == enebagraph[1][f]) {
+              if (d >= 3) f = g;
+              d = d + 1;  // Prevent too many copies, like PORKY bots
             }
           }
-          if (d < 4) {
-            enefine[g] = t;
-            g = g + 1;
-          }
+        }
+        if (d < 4) {
+          enefine[g] = t;
+          g = g + 1;
         }
       }
-      if (g == 0) {
-        cout << "\nAn error has occured while randomizing the graphics... "
-        "Shutting down!";
-        return 1;
+    }
+
+    if (g == 0) {
+      cout << "\nAn error has occured while randomizing the graphics... "
+      "Shutting down!";
+      return 1;
+    }
+
+    for (size_t i = 0; i < 257; i++) {
+      f = simple_rand() % g;
+      int d = enefine[f];
+      write32(EnemyBattleGraphicsPointers+i*8, enebagraph[0][d]);
+      write32(EnemyBattleGraphicsPointers+i*8+4, enebagraph[1][d]);
+      write32(EnemyArrangementPointers+i*8, enebaarra[0][d]);
+      write32(EnemyArrangementPointers+i*8+4, enebaarra[1][d]);
+      write32(EnemyGraphicsPalettePointers+i*8, enebapal[0][d]);
+      write32(EnemyGraphicsPalettePointers+i*8+4, enebapal[1][d]);
+      if (i != 0 && i != 256) {
+        int my_d = d;
+        if (my_d - 1 < 0) my_d = 255;
+        EnemyTable[i*144 + 108 - 144] = enedatahigh[my_d-1];
+        write16(EnemyTable + i*144 + 114 - 144, enedatafrba[my_d-1]);
+        write16(EnemyTable + i*144 + 112 - 144, eneheig[my_d-1]); // Putting back height values in
       }
-      i = 29957768;  // Start of enemy arrangements pointers
-      for (t = 0; t < 257; t++) {
-        enebaarra[0][t] = read32(memblock+i);
-        enebaarra[1][t] = read32(memblock+i+4);
-        i = i + 8;
-      }
-      i = 29955376;  // Start of enemy graphics palettes pointers
-      for (t = 0; t < 257; t++) {
-        enebapal[0][t] = read32(memblock+i);
-        enebapal[1][t] = read32(memblock+i+4);
-        i = i + 8;
-      }
-      i = 29952424;
-      // Picked pointer values... Now let's randomize them
-      d = 0;
-      for (t = 0; t < 257; t++) {
-        f = simple_rand() % g;
-        d = enefine[f];
-        enearra[t] = d;  // Making sure Battle Sprites get the correct
-         // Arrangements and Palettes
-        write32(memblock+i, enebagraph[0][enefine[f]]);
-        write32(memblock+i+4, enebagraph[1][enefine[f]]);
-        i = i + 8;
-      }
-      i = 29957768;
-      // Picked arrangements pointer values... Now let's randomize them
-      d = 0;
-      for (t = 0; t < 257; t++) {
-        write32(memblock+i, enebaarra[0][enearra[t]]);
-        write32(memblock+i+4, enebaarra[1][enearra[t]]);
-        i = i + 8;
-      }
-      i = 29955376;  // Start of enemy graphics palettes pointers
-      for (t = 0; t < 257; t++) {
-        write32(memblock+i, enebapal[0][enearra[t]]);
-        write32(memblock+i+4, enebapal[1][enearra[t]]);
-        i = i + 8;
-      }
-      i = 855588;
-      t = 0;
-      d = 0;
-      while (t < 255) {
-        d = enearra[t + 1];
-        if ((d - 1) < 0) d = 255;
-        f = enedatahigh[d - 1];
-        memblock[i] = f;  // Putting back height value in-battle
-        i = i + 144;
-        t = t + 1;
-      }
-      i = 855594;
-      t = 0;
-      d = 0;
-      while (t < 255) {
-        array1[0] = 0;
-        array1[1] = 0;
-        d = enearra[t + 1];
-        if ((d - 1) < 0) d = 255;
-        write16(memblock+i, enedatafrba[d-1]); // Putting back height values in-battle modifiers
-        i = i + 144;
-        t = t + 1;
-      }
-      i = 855592;
-      t = 0;
-      while (t < 255) {
-        array1[0] = 0;
-        array1[1] = 0;
-        d = enearra[t + 1];
-        if ((d - 1) < 0) d = 255;
-        write16(memblock+i, eneheig[d-1]); // Putting back height values in
-         // Battle Memory Modifiers
-        i = i + 144;
-        t = t + 1;
-      }
-      /*  i = 855596;  //Not needed
-t = 0;
-while (t < 255) {
-       d = enearra[t + 1];
-       if ((d - 1) < 0)
-               d = 255;
-       f = enememotur[d - 1];
-       memblock[i] = f;  //Putting back height value in-battle
-       i = i + 144;
-       t = t + 1;
-} */
-      i = 814434;   // Putting back height values for memo menu
-      t = 0;
-      while (t <= 254) {
-        d = enearra[t];
+      if (i < 255) {
         if (d >= 255) d = 254;
-        f = enememo[d];
-        memblock[i] = f;
-        t = t + 1;
-        i = i + 2;
+        EnemyHeightInBattle[2*i] = enememo[d];
       }
     }
   }
+
   i = 26426416;   // Get items garphics
   t = 0;
   if (RandomizeItemGraphics) {
