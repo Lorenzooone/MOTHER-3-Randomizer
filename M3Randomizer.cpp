@@ -62,28 +62,8 @@ using std::ofstream;using std::streampos;using std::string;
 
 // main program
 int main() {
-  simple_rand.seed(time(NULL));
+  simple_rand.seed(0/*time(NULL)*/);
   int i = 0, f = 0, t = 0, g = 0, d = 0, character = 0;
-  unsigned int array1[4] = {};
-  unsigned int charrand[15] = {};
-  unsigned int enemyweakness[2][2] = {};
-  unsigned int enebagraph[2][257] = {};
-  unsigned int enebaarra[2][257] = {};
-  unsigned int enesprsha[2][257] = {};
-  unsigned int enebapal[2][257] = {};
-  unsigned int enespr[257] = {};
-  unsigned int enesprinfo[257] = {};
-  unsigned int enesprpal[257] = {};
-  unsigned int enefine[257] = {};
-  unsigned int eneove[257] = {};
-  unsigned int enedatahigh[257] = {};
-  unsigned int enedatafrba[257] = {};
-  unsigned int enememo[255] = {};
-  unsigned int eneheig[257] = {};
-  unsigned int itemgraph[256][288] = {};
-  unsigned int itemnumber[256] = {};
-  unsigned int charsound[15] = {};
-  unsigned int itempal[256] = {};
    // unsigned int enememotur[257] = {};  //Is this needed???
   unsigned char option = 0;
   string input, end = ".gba", neo;  // ROM Name
@@ -234,16 +214,13 @@ int main() {
   file3.close();
   ofstream file2(input, ios::out | ios::binary);
 
-  char* EnemyHeightInBattle = memblock + 814434;
-  for (size_t i = 0; i < 255; i++) {
-    enememo[i] = EnemyHeightInBattle[i*2];
-  }
   
   t = 0;
   i = 837176;  // Start of characters stat table
   g = 0;
   f = 0;
   if (RandomizeCharacterStats) {
+    unsigned int charrand[15] = {};
     while (i < 842024) {
       while (t <= 10) {
         // Let's take and then randomize HP of character
@@ -335,33 +312,29 @@ int main() {
     }
     i = 837484;  // Randomize Sound Attacks for characters
     t = 0;
-    array1[0] = 0;
-    array1[1] = 0;
-    array1[2] = 0;
     while (t < 15) {
       d = simple_rand() % character;
       f = charrand[d];
       d = read16(memblock+i);
       if (d > 0) {
-        charsound[t] = f;
         write16(memblock+i, f);
       }
       i = i + 324;
       t = t + 1;
-      array1[0] = 0;
-      array1[1] = 0;
-      array1[2] = 0;
     }
   }
   t = 0;
   d = 0;
   g = 0;
   f = 0;
-  [[maybe_unused]] char* EnemyTable = memblock + 855480;
-  (void)EnemyTable;
+  char* EnemyTable = memblock + 855480;
   i = 855480;  // Start of enemy table
   i = i + 4;
+  unsigned int enedatahigh[257] = {};
+  unsigned int enedatafrba[257] = {};
+  unsigned int eneheig[257] = {};
   if (RandomizeEnemyStats) {
+    unsigned int enemyweakness[2][2] = {};
     while (t < 255) {
       for (g = 0; g <= 1; g++) {
         for (f = 0; f <= 1; f++) enemyweakness[g][f] = 0;
@@ -511,10 +484,6 @@ int main() {
       i = i + 5;
       f = 0;
       d = 0;
-      array1[0] = 0;
-      array1[1] = 0;
-      array1[2] = 0;
-      array1[3] = 0;
       while (f < 20) {  // Randomize Weaknesses
         if ((t != 19) && (t != 16)) {
           g = simple_rand() % 20;
@@ -542,8 +511,6 @@ int main() {
         i = i + 2;
         f = f + 1;
       }
-      array1[0] = 0;
-      array1[1] = 0;
       f = 0;
       i = i + 16;
       g = simple_rand() % 59 + 1;
@@ -709,51 +676,52 @@ int main() {
       i = i + 4;
 
       if (t != 19) {
+        unsigned int array1[4] = {};
         if (enemyweakness[1][0] == 0) {
-          array1[0] = 230;  // Let's make the game print correct weaknesses
-          array1[1] = 1;
-          array1[2] = 230;
-          array1[3] = 1;
+          memblock[i+0] = 230;  // Let's make the game print correct weaknesses
+          memblock[i+1] = 1;
+          memblock[i+2] = 230;
+          memblock[i+3] = 1;
         } else if (enemyweakness[1][1] == 0) {
           if (enemyweakness[0][0] <= 7)
-            array1[0] = 12 + enemyweakness[0][0];
+            memblock[i+0] = 12 + enemyweakness[0][0];
           else if (enemyweakness[0][0] == 10)
-            array1[0] = 22;
+            memblock[i+0] = 22;
           else if (enemyweakness[0][0] == 11)  // DCMC
-            array1[0] = 50;
+            memblock[i+0] = 50;
           else if (enemyweakness[0][0] == 12)  // Wall Staples
-            array1[0] = 52;
+            memblock[i+0] = 52;
           else
-            array1[0] = enemyweakness[0][0] - 13;
-          array1[1] = 2;
-          array1[2] = 230;
-          array1[3] = 1;
+            memblock[i+0] = enemyweakness[0][0] - 13;
+          memblock[i+1] = 2;
+          memblock[i+2] = 230;
+          memblock[i+3] = 1;
         } else {
           if (enemyweakness[0][0] <= 7)
-            array1[0] = 12 + enemyweakness[0][0];
+            memblock[i+0] = 12 + enemyweakness[0][0];
           else if (enemyweakness[0][0] == 10)
-            array1[0] = 22;
+            memblock[i+0] = 22;
           else if (enemyweakness[0][0] == 11)  // DCMC
-            array1[0] = 50;
+            memblock[i+0] = 50;
           else if (enemyweakness[0][0] == 12)  // Wall Staples
-            array1[0] = 52;
+            memblock[i+0] = 52;
           else
-            array1[0] = enemyweakness[0][0] - 13;
-          array1[1] = 2;
+            memblock[i+0] = enemyweakness[0][0] - 13;
+          memblock[i+1] = 2;
           if (enemyweakness[0][1] <= 7)
-            array1[2] = 12 + enemyweakness[0][1];
+            memblock[i+2] = 12 + enemyweakness[0][1];
           else if (enemyweakness[0][1] == 10)
-            array1[0] = 22;
+            memblock[i+2] = 22;
           else if (enemyweakness[0][1] == 11)  // DCMC
-            array1[2] = 50;
+            memblock[i+2] = 50;
           else if (enemyweakness[0][1] == 12)  // Wall Staples
-            array1[2] = 52;
+            memblock[i+2] = 52;
           else
-            array1[2] = enemyweakness[0][1] - 13;
-          array1[3] = 2;
+            memblock[i+2] = enemyweakness[0][1] - 13;
+          memblock[i+3] = 2;
         }
-        for (f = 0; f <= 3; f++) memblock[i + f] = array1[f];
       }
+
       i = i + 8;
       t = t + 1;
     }
@@ -854,6 +822,11 @@ int main() {
     char* EneSprShaTable = memblock + 21197428;
     char* SpritePalettes = memblock + 27530576;
     char* SpriteInfoTable = memblock + 27543208;
+    unsigned int enesprsha[2][257] = {};
+    unsigned int enespr[257] = {};
+    unsigned int enesprinfo[257] = {};
+    unsigned int enesprpal[257] = {};
+    unsigned int eneove[257] = {};
     std::unordered_set<int> spritesToSkip = { 1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 33, 40, 46, 56, 61, 66, 84, 91, 92, 101, 111, 133, 141, 142, 145, 160, 162, 163, 169, 180, 181 };
 
     for (size_t t = 1; t <= 185; t++) {
@@ -886,7 +859,10 @@ int main() {
     char* EnemyBattleGraphicsPointers = memblock + 29952424;
     char* EnemyArrangementPointers = memblock + 29957768;
     char* EnemyGraphicsPalettePointers = memblock + 29955376;
-    char* EnemyTable = memblock + 855480;
+    unsigned int enebagraph[2][257] = {};
+    unsigned int enebaarra[2][257] = {};
+    unsigned int enebapal[2][257] = {};
+    unsigned int enefine[257] = {};
     for (size_t t = 0; t < 257; t++) {
       // Let's take and then randomize HP
       enebagraph[0][t] = read32(EnemyBattleGraphicsPointers+t*8);
@@ -919,6 +895,12 @@ int main() {
       return 1;
     }
 
+    char* EnemyHeightInBattle = memblock + 814434;
+    unsigned int enememo[255] = {};
+    for (size_t i = 0; i < 255; i++) {
+      enememo[i] = EnemyHeightInBattle[i*2];
+    }
+
     for (size_t i = 0; i < 257; i++) {
       f = simple_rand() % g;
       int d = enefine[f];
@@ -945,6 +927,9 @@ int main() {
   i = 26426416;   // Get items garphics
   t = 0;
   if (RandomizeItemGraphics) {
+    unsigned int itemgraph[256][288] = {};
+    unsigned int itempal[256] = {};
+    unsigned int itemnumber[256] = {};
     character = 0;
     while (t <= 241) {
       for (g = 0; g <= 287; g++)
