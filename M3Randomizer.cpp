@@ -40,6 +40,17 @@ void write32(char* buffer, uint32_t value) {
   buf[0] = (value) & 0xFF;
 }
 
+std::minstd_rand simple_rand;
+
+// range is N, where the randomization will happen from (N-1) * value / N to (N+1) * value / N.
+// so for a value of 100 and a range of 10, it'll be between 90 and 110 (inclusive)
+// for a value of 100 and a range of 2, it'll be between 50 and 150 (inclusive)
+int randomize(int value, int range) {
+  int randomize_range = std::max<int>(1, value / range);
+  int basevalue = value - randomize_range;
+  return basevalue + simple_rand() % (randomize_range * 2 + 1);
+}
+
 // reading an entire binary file
 bool ends_with(std::string
   const & a, std::string
@@ -51,7 +62,6 @@ using std::ofstream;using std::streampos;using std::string;
 
 // main program
 int main() {
-  std:: minstd_rand simple_rand;
   simple_rand.seed(time(NULL));
   int i = 0, f = 0, t = 0, g = 0, d = 0, character = 0;
   unsigned int array1[4] = {};
@@ -239,11 +249,7 @@ int main() {
         // Let's take and then randomize HP of character
         d = read32(memblock+i);
         if ((d > 1) && (d < 100000000)) {
-          f = d / 2;
-          if (d < 2) f = 1;
-          g = d - f;
-          f = (f * 2) + 1;
-          d = simple_rand() % f + g;
+          d = randomize(d, 2);
         }
         write32(memblock+i, d);
 
@@ -251,55 +257,35 @@ int main() {
         i = i + 4;
         d = read32(memblock+i);
         if ((d > 1) && (d < 100000000)) {
-          f = d / 2;
-          if (d < 2) f = 1;
-          g = d - f;
-          f = (f * 2) + 1;
-          d = simple_rand() % f + g;
+          d = randomize(d, 2);
         }
         write32(memblock+i, d);
 
         i = i + 4;
         g = (unsigned char) memblock[i];
         if ((g > 1) && (g < 255)) {  // Randomize Attack
-          d = g / 10;
-          if (g < 10) d = 1;
-          f = g - d;
-          d = (d * 2) + 1;
-          g = simple_rand() % d + f;
+          g = randomize(g, 10);
           if (g > 255) g = 255;
         }
         memblock[i] = g;
         i = i + 1;
         g = (unsigned char) memblock[i];
         if ((g > 1) && (g < 255)) {  // Randomize Defense
-          d = g / 10;
-          if (g < 10) d = 1;
-          f = g - d;
-          d = (d * 2) + 1;
-          g = simple_rand() % d + f;
+          g = randomize(g, 10);
           if (g > 255) g = 255;
         }
         memblock[i] = g;
         i = i + 1;
         g = (unsigned char) memblock[i];
         if ((g > 1) && (g < 255)) {  // Randomize IQ
-          d = g / 10;
-          if (g < 10) d = 1;
-          f = g - d;
-          d = (d * 2) + 1;
-          g = simple_rand() % d + f;
+          g = randomize(g, 10);
           if (g > 255) g = 255;
         }
         memblock[i] = g;
         i = i + 1;
         g = (unsigned char) memblock[i];
         if ((g > 1) && (g < 255)) {  // Randomize Speed
-          d = g / 10;
-          if (g < 10) d = 1;
-          f = g - d;
-          d = (d * 2) + 1;
-          g = simple_rand() % d + f;
+          g = randomize(g, 10);
           if (g > 255) g = 255;
         }
         memblock[i] = g;
@@ -447,22 +433,14 @@ int main() {
       i = i + 2;
       g = (unsigned char) memblock[i];
       if ((g > 1) && (g < 99)) {  // Randomize Level
-        d = g / 5;
-        if (g < 5) d = 1;
-        f = g - d;
-        d = (d * 2) + 1;
-        g = simple_rand() % d + f;
+        g = randomize(g, 5);
       }
       memblock[i] = g;
       i = i + 2;
       // Let's take and then randomize HP
       d = read32(memblock+i);
       if ((d > 1) && (d < 100000000)) {
-        f = d / 10;
-        if (d < 10) f = 1;
-        g = d - f;
-        f = (f * 2) + 1;
-        d = simple_rand() % f + g;
+        d = randomize(d, 10);
       }
       write32(memblock+i, d);
       i = i + 4;
@@ -470,99 +448,63 @@ int main() {
        // Let's take and then randomize PP
       d = read32(memblock+i);
       if ((d > 1) && (d < 100000000)) {
-        f = d / 10;
-        if (d < 10) f = 1;
-        g = d - f;
-        f = (f * 2) + 1;
-        d = simple_rand() % f + g;
+        d = randomize(d, 10);
       }
       write32(memblock+i, d);
       i = i + 4;
 
       g = (unsigned char) memblock[i];
       if ((g > 1) && (g < 255)) {  // Randomize Attack
-        d = g / 10;
-        if (g < 10) d = 1;
-        f = g - d;
-        d = (d * 2) + 1;
-        g = simple_rand() % d + f;
+        g = randomize(g, 10);
         if (g > 255) g = 255;
       }
       memblock[i] = g;
       i = i + 1;
       g = (unsigned char) memblock[i];
       if ((g > 1) && (g < 255)) {  // Randomize Defense
-        d = g / 10;
-        if (g < 10) d = 1;
-        f = g - d;
-        d = (d * 2) + 1;
-        g = simple_rand() % d + f;
+        g = randomize(g, 10);
         if (g > 255) g = 255;
       }
       memblock[i] = g;
       i = i + 1;
       g = (unsigned char) memblock[i];
       if ((g > 1) && (g < 255)) {  // Randomize QI
-        d = g / 10;
-        if (g < 10) d = 1;
-        f = g - d;
-        d = (d * 2) + 1;
-        g = simple_rand() % d + f;
+        g = randomize(g, 10);
         if (g > 255) g = 255;
       }
       memblock[i] = g;
       i = i + 1;
       g = (unsigned char) memblock[i];
       if ((g > 1) && (g < 255)) {  // Randomize Speed
-        d = g / 10;
-        if (g < 10) d = 1;
-        f = g - d;
-        d = (d * 2) + 1;
-        g = simple_rand() % d + f;
+        g = randomize(g, 10);
         if (g > 255) g = 255;
       }
       memblock[i] = g;
       i = i + 5;
       g = (unsigned char) memblock[i];
       if ((g > 1) && (g < 255)) {  // Randomize Back Attack
-        d = g / 10;
-        if (g < 10) d = 1;
-        f = g - d;
-        d = (d * 2) + 1;
-        g = simple_rand() % d + f;
+        g = randomize(g, 10);
         if (g > 255) g = 255;
       }
       memblock[i] = g;
       i = i + 1;
       g = (unsigned char) memblock[i];
       if ((g > 1) && (g < 255)) {  // Randomize Back Defense
-        d = g / 10;
-        if (g < 10) d = 1;
-        f = g - d;
-        d = (d * 2) + 1;
-        g = simple_rand() % d + f;
+        g = randomize(g, 10);
         if (g > 255) g = 255;
       }
       memblock[i] = g;
       i = i + 1;
       g = (unsigned char) memblock[i];
       if ((g > 1) && (g < 255)) {  // Randomize Back QI
-        d = g / 10;
-        if (g < 10) d = 1;
-        f = g - d;
-        d = (d * 2) + 1;
-        g = simple_rand() % d + f;
+        g = randomize(g, 10);
         if (g > 255) g = 255;
       }
       memblock[i] = g;
       i = i + 1;
       g = (unsigned char) memblock[i];
       if ((g > 1) && (g < 255)) {  // Randomize Back Speed
-        d = g / 10;
-        if (g < 10) d = 1;
-        f = g - d;
-        d = (d * 2) + 1;
-        g = simple_rand() % d + f;
+        g = randomize(g, 10);
         if (g > 255) g = 255;
       }
       memblock[i] = g;
@@ -753,11 +695,7 @@ int main() {
       // Let's take and then randomize EXP
       d = read32(memblock+i);
       if ((d > 1) && (d < 10000000)) {
-        f = d / 10;
-        if (d < 10) f = 1;
-        g = d - f;
-        f = (f * 2) + 1;
-        d = simple_rand() % f + g;
+        d = randomize(d, 10);
       }
       write32(memblock+i, d);
       i = i + 4;
@@ -765,11 +703,7 @@ int main() {
       // Let's take and then randomize Money
       d = read32(memblock+i);
       if ((d > 1) && (d < 10000000)) {
-        f = d / 10;
-        if (d < 10) f = 1;
-        g = d - f;
-        f = (f * 2) + 1;
-        d = simple_rand() % f + g;
+        d = randomize(d, 10);
       }
       write32(memblock+i, d);
       i = i + 4;
@@ -834,11 +768,7 @@ int main() {
     for (size_t i = 0; i < 256; i++) {
       d = read16(ItemTable + i * 108 + 10);
       if (d > 1) {
-        f = d / 5;
-        if (d < 5) f = 1;
-        g = d - f;
-        f = (f * 2) + 1;
-        d = simple_rand() % f + g;
+        d = randomize(d, 5);
       }
       write16(ItemTable + i * 108 + 10, d);
     }
