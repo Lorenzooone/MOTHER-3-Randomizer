@@ -1187,7 +1187,7 @@ void RandomizeItemStats(char* memblock) {
 
 // main program
 int main() {
-  simple_rand.seed(0/*time(NULL)*/);
+  simple_rand.seed(time(NULL));
 
   MainMenu();
   std::string input = GetInputFilename();
